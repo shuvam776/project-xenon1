@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Modern Left-Aligned Hero Section */}
-      <section id="home" className="relative w-full min-h-[70vh] flex flex-col pt-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat overflow-hidden" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
+      <section id="home" className="relative w-full min-h-[70vh] flex flex-col pt-20 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat overflow-hidden" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
         {/* Subtle Decorative Gradients */}
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
         <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
@@ -15,7 +15,7 @@ export default function Home() {
         
         
 
-        <div className="max-w-7xl mx-auto w-full pt-4 pb-32 md:pb-40 relative z-20 flex flex-col items-center justify-center">
+        <div className="max-w-7xl mx-auto w-full pt-6 pb-32 md:pb-40 relative z-20 flex flex-col items-center justify-center">
           
           {/* Main Heading */}
           <div className="text-center w-full space-y-6 mb-12 flex flex-col items-center">
@@ -23,7 +23,7 @@ export default function Home() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sans font-black text-slate-900 tracking-tight leading-tight antialiased whitespace-nowrap w-full text-center">
                 Find the <span className="relative inline-block italic text-blue-600 mx-2 font-black">
                   Perfect
-                  <svg className="absolute w-[110%] h-4 -bottom-2 -left-[5%] text-blue-400 opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <svg className="absolute w-[110%] h-4 -bottom-2 -left-[5%] text-slate-900 opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                     <path d="M0 15 Q 50 0 100 15" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                   </svg>
                 </span> Hoarding Space
