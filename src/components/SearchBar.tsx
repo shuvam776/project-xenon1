@@ -5,6 +5,7 @@ import { Search, MapPin, Navigation } from "lucide-react";
 import { HOARDING_TYPES } from "@/utils/cities";
 import { useRouter } from "next/navigation";
 
+// Initial fallback cities
 const B3_CITIES = [
   { city: "Bhubaneswar", state: "Odisha", display: "Bhubaneswar, Odisha" },
   { city: "Cuttack", state: "Odisha", display: "Cuttack, Odisha" },
@@ -17,16 +18,36 @@ export default function SearchBar() {
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredCities, setFilteredCities] = useState(B3_CITIES);
+  const [filteredCities, setFilteredCities] = useState<typeof B3_CITIES>(B3_CITIES);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [availableCities, setAvailableCities] = useState<typeof B3_CITIES>(B3_CITIES);
+
+  // Fetch cities from DB on mount
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const res = await fetch("/api/cities");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setAvailableCities(data);
+            setFilteredCities(data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cities for searchbar:", error);
+      }
+    };
+    fetchCities();
+  }, []);
 
   // Filter cities based on input
   useEffect(() => {
     if (cityInput.trim() === "") {
-      setFilteredCities(B3_CITIES);
+      setFilteredCities(availableCities);
     } else {
-      const filtered = B3_CITIES.filter(
+      const filtered = availableCities.filter(
         (cityObj) =>
           cityObj.city.toLowerCase().includes(cityInput.toLowerCase()) ||
           cityObj.state.toLowerCase().includes(cityInput.toLowerCase()) ||
@@ -34,7 +55,7 @@ export default function SearchBar() {
       );
       setFilteredCities(filtered);
     }
-  }, [cityInput]);
+  }, [cityInput, availableCities]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -93,7 +114,7 @@ export default function SearchBar() {
 
           if (locationName) {
             // Find matching city in our list
-            const cityObj = B3_CITIES.find(
+            const cityObj = availableCities.find(
               (c) =>
                 c.city.toLowerCase() === locationName.toLowerCase() ||
                 c.display.toLowerCase().includes(locationName.toLowerCase()),
