@@ -44,8 +44,13 @@ export default async function Home() {
         <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
         {/* Artistic Blended Billboard Imagery */}
+<<<<<<<<< Temporary merge branch 1
+        {/*body */}
         
+=========
         
+        {/*good*/}
+>>>>>>>>> Temporary merge branch 2
 
         <div className="max-w-7xl mx-auto w-full pt-6 pb-32 md:pb-40 relative z-20 flex flex-col items-center justify-center">
           
