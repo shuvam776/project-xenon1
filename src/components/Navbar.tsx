@@ -16,8 +16,9 @@ export default function Navbar() {
   const desktopMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isDashboardPage = pathname?.startsWith("/buyer") || pathname?.startsWith("/vendor");
-
-  // Close menus when path changes
+  const isProfilePage = pathname === "/profile";
+  const isHomePage = pathname === "/";
+  const showGradient = !isHomePage && !isProfilePage;
   useEffect(() => {
     setIsMenuOpen(false);
     setIsDesktopMenuOpen(false);
@@ -40,12 +41,12 @@ export default function Navbar() {
     window.location.reload();
   };
 
-  const isHomePage = pathname === "/";
+
 
   return (
     <>
-      <div className={`${isHomePage ? 'absolute top-0 bg-transparent' : 'relative bg-white'} w-full z-50`}>
-        <nav className={`${isHomePage ? 'bg-transparent border-transparent' : 'bg-white border-slate-100'} text-slate-800 border-b transition-all duration-300`}>
+      <div className={`${isHomePage ? 'absolute top-0 bg-transparent' : showGradient ? 'relative bg-gradient-to-r from-blue-100 to-indigo-50' : 'relative bg-white'} w-full z-50`}>
+        <nav className={`${isHomePage ? 'bg-transparent border-transparent' : showGradient ? 'bg-transparent border-blue-100' : 'bg-white border-slate-100'} text-slate-800 border-b transition-all duration-300`}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between gap-4 md:h-20 relative">
               

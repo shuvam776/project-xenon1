@@ -1,7 +1,39 @@
 import SearchBar from "@/components/SearchBar";
 import "@fontsource/chiron-goround-tc";
+import connectDB from "@/lib/dbConnect";
+import Hoarding from "@/models/Hoarding";
+import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  await connectDB();
+  
+  // Fetch top 6 cities with the most approved hoardings
+  const cityAgg = await Hoarding.aggregate([
+    { $match: { status: 'approved' } },
+    { $group: { _id: "$location.city", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 6 }
+  ]);
+
+  const colors = ["bg-blue-50", "bg-orange-50", "bg-indigo-50", "bg-emerald-50", "bg-rose-50", "bg-amber-50"];
+  
+  let featuredLocations = cityAgg.map((item, idx) => ({
+    city: item._id,
+    count: item.count,
+    color: colors[idx % colors.length]
+  }));
+
+  // Fallback if no hoardings in DB yet
+  if (featuredLocations.length === 0) {
+    featuredLocations = [
+      { city: "Bhubaneswar", count: 0, color: "bg-blue-50" },
+      { city: "Mumbai", count: 0, color: "bg-orange-50" },
+      { city: "Cuttack", count: 0, color: "bg-indigo-50" },
+      { city: "Kolkata", count: 0, color: "bg-emerald-50" },
+      { city: "Delhi", count: 0, color: "bg-rose-50" },
+      { city: "Bangalore", count: 0, color: "bg-amber-50" },
+    ];
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,28 +86,22 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { city: "Bhubaneswar", visits: "2.4k+ Monthly Views", color: "bg-blue-50" },
-              { city: "Mumbai", visits: "5.1k+ Monthly Views", color: "bg-orange-50" },
-              { city: "Cuttack", visits: "1.2k+ Monthly Views", color: "bg-indigo-50" },
-              { city: "Kolkata", visits: "3.8k+ Monthly Views", color: "bg-emerald-50" },
-              { city: "Delhi", visits: "4.5k+ Monthly Views", color: "bg-rose-50" },
-              { city: "Bangalore", visits: "3.2k+ Monthly Views", color: "bg-amber-50" },
-            ].map((loc, idx) => (
-              <div 
+            {featuredLocations.map((loc, idx) => (
+              <Link 
+                href={`/explore?city=${encodeURIComponent(loc.city)}`}
                 key={idx}
-                className="group relative overflow-hidden rounded-3xl border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 cursor-pointer"
+                className="group relative overflow-hidden rounded-3xl border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 cursor-pointer block"
               >
                 <div className={`h-48 ${loc.color} flex items-center justify-center overflow-hidden relative`}>
                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                   <h3 className="text-3xl font-black text-slate-900/10 group-hover:text-slate-900/20 transition-colors uppercase tracking-widest scale-150">
+                   <h3 className="text-3xl font-black text-slate-900/10 group-hover:text-slate-900/20 transition-colors uppercase tracking-widest scale-150 whitespace-nowrap px-4 text-center">
                      {loc.city}
                    </h3>
                 </div>
                 <div className="p-8 bg-white border-t border-slate-50">
                   <h4 className="text-xl font-black text-slate-900 mb-1">{loc.city}</h4>
                   <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                    {loc.visits}
+                    {loc.count > 0 ? `${loc.count} Hoarding${loc.count > 1 ? 's' : ''} Available` : 'Explore Spaces'}
                   </p>
                   <div className="mt-6 flex items-center justify-between">
                     <span className="text-[11px] font-black uppercase tracking-widest text-blue-600">View Spaces</span>
@@ -84,7 +110,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

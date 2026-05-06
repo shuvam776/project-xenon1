@@ -974,7 +974,7 @@ function BuyerDashboardContent() {
                       <p className="text-gray-500 font-bold">
                         {searchQuery.trim()
                           ? "No campaigns match your search"
-                          : "You haven&apos;t booked any campaigns yet"}
+                          : "You haven't booked any campaigns yet"}
                       </p>
                       <Link href="/" className="mt-4 inline-block text-blue-600 font-bold hover:underline">Start Exploring</Link>
                    </div>
