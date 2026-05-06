@@ -141,11 +141,11 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="bg-white rounded-none shadow-[6px_6px_0px_0px_rgba(30,41,59,0.5)] border border-blue-200 p-6 md:p-10 relative">
+    <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] border border-white/60 p-4 md:p-6 relative">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 relative z-10">
         {/* City Input with Autocomplete */}
         <div className="md:col-span-5 relative" ref={suggestionsRef}>
-          <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-[0.2em]">
+          <label className="block text-xs font-semibold text-slate-600 mb-2 pl-2 uppercase tracking-widest">
             City
           </label>
           <div className="relative">
@@ -158,11 +158,11 @@ export default function SearchBar() {
               }}
               onFocus={() => setShowSuggestions(true)}
               placeholder="Search by city"
-              className="w-full px-4 py-3 pl-11 border border-blue-200 focus:ring-0 focus:border-blue-400 bg-transparent outline-none transition-colors text-sm font-bold tracking-wide text-slate-900 placeholder:font-medium placeholder:text-slate-400"
+              className="w-full px-5 py-4 pl-12 rounded-xl border border-transparent shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white outline-none transition-all text-base font-bold text-slate-900 tracking-tight placeholder:text-slate-400 placeholder:font-semibold"
             />
             <MapPin
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500"
+              size={20}
             />
             <button
               type="button"
@@ -180,7 +180,7 @@ export default function SearchBar() {
 
           {/* Autocomplete Suggestions */}
           {showSuggestions && filteredCities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-64 overflow-y-auto z-50 outline-none divide-y divide-slate-100">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-48 overflow-y-auto overscroll-contain z-50 outline-none divide-y divide-slate-100">
               {filteredCities.slice(0, 10).map((cityObj, index) => (
                 <button
                   key={index}
@@ -199,17 +199,17 @@ export default function SearchBar() {
 
         {/* Hoarding Type Dropdown */}
         <div className="md:col-span-4">
-          <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-[0.2em]">
+          <label className="block text-xs font-semibold text-slate-600 mb-2 pl-2 uppercase tracking-widest">
             Hoarding Type
           </label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full px-4 py-3 border border-blue-200 focus:ring-0 focus:border-blue-400 bg-transparent outline-none transition-colors text-sm font-bold tracking-wide text-slate-900 appearance-none cursor-pointer"
+            className="w-full px-5 py-4 rounded-xl border border-transparent shadow-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white outline-none transition-all text-base font-bold text-slate-900 tracking-tight appearance-none cursor-pointer"
           >
-            <option value="" className="text-xs uppercase tracking-wider font-bold">ALL TYPES</option>
+            <option value="" className="font-semibold text-slate-700">ALL TYPES</option>
             {HOARDING_TYPES.map((type) => (
-              <option key={type} value={type} className="text-xs uppercase tracking-wider font-bold">
+              <option key={type} value={type} className="font-semibold text-slate-700">
                 {type}
               </option>
             ))}
@@ -219,7 +219,7 @@ export default function SearchBar() {
         <div className="md:col-span-3 flex items-end">
           <button
             onClick={handleSearch}
-            className="group w-full bg-slate-900 hover:bg-[#2563eb] text-white font-black text-[11px] uppercase tracking-[0.15em] py-4 px-6 rounded-none transition-all flex items-center justify-center shadow-xl hover:-translate-y-1 overflow-hidden"
+            className="group w-full bg-[#0066FF] hover:bg-blue-700 text-white font-bold text-base tracking-wide py-4 px-6 rounded-xl transition-all flex items-center justify-center shadow-lg shadow-blue-600/40 hover:shadow-xl hover:-translate-y-0.5"
           >
             <div className="w-0 opacity-0 overflow-hidden transition-all duration-300 ease-out group-hover:w-5 group-hover:opacity-100 group-hover:mr-2 flex items-center justify-center">
               <Search size={16} className="shrink-0" />
