@@ -36,7 +36,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       {/* Modern Left-Aligned Hero Section */}
       <section id="home" className="relative w-full min-h-[70vh] flex flex-col pt-20 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat overflow-hidden" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
         {/* Subtle Decorative Gradients */}
@@ -52,7 +52,7 @@ export default async function Home() {
           {/* Main Heading */}
           <div className="text-center w-full space-y-6 mb-12 flex flex-col items-center">
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-sans font-black text-slate-900 tracking-tight leading-tight antialiased whitespace-nowrap w-full text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 tracking-tight leading-tight antialiased whitespace-nowrap w-full text-center">
                 Find the <span className="relative inline-block italic text-blue-600 mx-2 font-black">
                   Perfect
                   <svg className="absolute w-[110%] h-4 -bottom-2 -left-[5%] text-slate-900 opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
@@ -79,7 +79,7 @@ export default async function Home() {
       <section className="py-8 md:py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center mb-10 text-center">
-            <h2 className="text-4xl md:text-5xl font-sans font-black text-slate-900 tracking-tight leading-tight antialiased mb-4">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight antialiased mb-4">
               Featured locations
             </h2>
             <div className="w-20 h-1.5 bg-blue-600 rounded-full"></div>
