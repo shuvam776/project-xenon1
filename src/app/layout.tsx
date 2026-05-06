@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "@/components/Navbar";
@@ -7,6 +7,16 @@ import Footer from "@/components/Footer";
 import ToastManager from "@/components/ToastManager";
 import AdminChatWidget from "@/components/AdminChatWidget";
 import Script from "next/script";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -117,7 +127,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${inter.variable} ${outfit.variable} antialiased bg-gray-50`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${outfit.variable} antialiased bg-gray-50`}
       >
         <noscript>
           <iframe
