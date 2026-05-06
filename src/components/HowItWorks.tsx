@@ -76,7 +76,7 @@ export default function HowItWorks() {
   const isAgencies = activeTab === "agencies";
 
   return (
-    <section id="how-it-works" className="py-24 bg-slate-50 relative border-t border-slate-200">
+    <section id="how-it-works" className="pt-12 pb-24 bg-white relative">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-16">
@@ -107,7 +107,7 @@ export default function HowItWorks() {
               onClick={() => setActiveTab("vendors")}
               className={`flex items-center justify-center gap-3 px-8 py-4 rounded-md text-base font-bold transition-all duration-200 w-full sm:w-auto mt-2 sm:mt-0 ${
                 !isAgencies 
-                  ? "bg-slate-800 text-white shadow-sm" 
+                  ? "bg-orange-600 text-white shadow-sm" 
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -125,13 +125,17 @@ export default function HowItWorks() {
           {currentSteps.map((step, index) => (
             <div 
               key={index} 
-              className={`relative group bg-white p-8 border-2 rounded-none hover:shadow-xl transition-all duration-300 ${
-                isAgencies ? 'border-slate-200 hover:border-blue-500' : 'border-slate-200 hover:border-slate-800'
+              className={`relative group bg-white p-8 border-2 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 overflow-hidden ${
+                isAgencies ? 'border-slate-100 hover:border-blue-500/30' : 'border-slate-100 hover:border-orange-500/30'
               } ${index % 2 === 0 ? 'lg:-translate-y-6' : 'lg:translate-y-6'}`}
             >
+              {/* Solid Top Border on Hover */}
+              <div className={`absolute top-0 left-0 right-0 h-[3px] transition-opacity duration-300 opacity-0 group-hover:opacity-100 ${
+                isAgencies ? 'bg-blue-600' : 'bg-orange-600'
+              }`}></div>
               <div className="flex flex-col items-start h-full text-left">
                 {/* Icon Container */}
-                <div className={`w-14 h-14 rounded-none flex items-center justify-center mb-8 border ${isAgencies ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100'}`}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 border transition-transform duration-500 group-hover:scale-110 ${isAgencies ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100'}`}>
                   {step.icon}
                 </div>
                 

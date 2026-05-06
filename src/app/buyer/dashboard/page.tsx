@@ -609,9 +609,9 @@ function BuyerDashboardContent() {
     <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       {/* Sidebar */}
-      <aside className="w-60 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
+      <aside className="w-60 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col sticky top-0 h-screen">
         <div className="mb-2 w-full px-2"></div>
-
+ 
         <nav className="flex-1 w-full space-y-2">
           {[
             { id: "overview", icon: LayoutDashboard, label: "Dashboard" },
@@ -644,19 +644,6 @@ function BuyerDashboardContent() {
             </button>
           ))}
         </nav>
-
-        <div className="w-full pt-6 border-t border-gray-100">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-5 py-3 text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
-          >
-            <LogOut
-              size={22}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            <span className="font-bold text-sm">Logout</span>
-          </button>
-        </div>
       </aside>
 
       {/* Main Content */}
