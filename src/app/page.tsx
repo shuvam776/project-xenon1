@@ -45,7 +45,7 @@ export default async function Home() {
 
         {/* Artistic Blended Billboard Imagery */}
         
-        {/*good*/}
+        
 
         <div className="max-w-7xl mx-auto w-full pt-6 pb-32 md:pb-40 relative z-20 flex flex-col items-center justify-center">
           
