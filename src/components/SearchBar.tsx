@@ -201,7 +201,7 @@ export default function SearchBar() {
 
           {/* Autocomplete Suggestions */}
           {showSuggestions && filteredCities.length > 0 && (
-            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white border border-slate-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] max-h-64 overflow-y-auto z-50 outline-none divide-y divide-slate-50">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-48 overflow-y-auto overscroll-contain z-50 outline-none divide-y divide-slate-100">
               {filteredCities.slice(0, 10).map((cityObj, index) => (
                 <button
                   key={index}
