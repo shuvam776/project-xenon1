@@ -94,7 +94,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       hoarding.location = {
          address: data.address,
          city: data.city,
-         area: data.area,
+
          state: data.state,
          zipCode: data.zipCode,
          coordinates: {
@@ -110,10 +110,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       hoarding.lightingType = data.lightingType;
       hoarding.pricePerMonth = data.pricePerMonth;
       hoarding.minimumBookingAmount = data.minimumBookingAmount || 0;
-      hoarding.hoardingCode = data.hoardingCode;
-      hoarding.trafficFrom = data.trafficFrom;
+
+
       hoarding.uniqueReach = data.uniqueReach;
-      hoarding.uniqueFootfall = data.uniqueFootfall;
+
       hoarding.images = data.images || [];
 
       await hoarding.save();

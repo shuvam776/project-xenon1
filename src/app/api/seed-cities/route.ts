@@ -8,7 +8,7 @@ export async function GET() {
     await dbConnect();
     
     // Check if they already exist to avoid duplicates
-    const existing = await Hoarding.findOne({ "location.city": "Bhubaneswar", "name": "Premium Billboard - Master Plan Area" });
+    const existing = await Hoarding.findOne({ "location.city": "Bhubaneswar", "name": "Premium Hoarding - Master Plan Area" });
     if (existing) {
        return NextResponse.json({ message: "Already seeded" });
     }
@@ -17,15 +17,15 @@ export async function GET() {
 
     const mockHoardings = [
       {
-        name: "Premium Billboard - Master Plan Area",
+        name: "Premium Hoarding - Master Plan Area",
         location: {
           address: "Master Plan Road, Near City Center",
           city: "Bhubaneswar",
-          area: "City Center",
+
           state: "Odisha",
         },
         dimensions: { width: 40, height: 20 },
-        type: "Billboard",
+        type: "Hoarding",
         lightingType: "Front Lit",
         pricePerMonth: 45000,
         minimumBookingAmount: 15000,
@@ -39,7 +39,7 @@ export async function GET() {
         location: {
           address: "High Court Road, Collectorate Area",
           city: "Cuttack",
-          area: "Collectorate Area",
+
           state: "Odisha",
         },
         dimensions: { width: 60, height: 20 },
@@ -57,7 +57,7 @@ export async function GET() {
         location: {
           address: "Steel City Square, NIT Road",
           city: "Rourkela",
-          area: "NIT Road",
+
           state: "Odisha",
         },
         dimensions: { width: 20, height: 20 },

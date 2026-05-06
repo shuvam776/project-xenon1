@@ -21,7 +21,7 @@ export default function Footer() {
   ];
 
   const categories = [
-    { name: "Billboard", href: "/search?type=Billboard" },
+    { name: "Hoarding", href: "/search?type=Hoarding" },
     { name: "Unipole", href: "/search?type=Unipole" },
     { name: "Gantry", href: "/search?type=Gantry" },
     { name: "Bus Shelter", href: "/search?type=Bus%20Shelter" },

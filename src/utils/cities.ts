@@ -105,7 +105,7 @@ export const INDIAN_CITIES = [
 ];
 
 export const HOARDING_TYPES = [
-    "Billboard",
+    "Hoarding",
     "Unipole",
     "Gantry",
     "Bus Shelter",

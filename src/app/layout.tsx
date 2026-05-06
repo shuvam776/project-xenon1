@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   keywords: [
     "hoardings",
     "outdoor advertising",
-    "billboards",
+    "outdoor hoardings",
     "ad spaces",
     "advertising India",
   ],

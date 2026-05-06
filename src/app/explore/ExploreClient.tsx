@@ -225,9 +225,6 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                           {typeof hoarding.uniqueReach === "number" &&
                           hoarding.uniqueReach > 0
                             ? `${hoarding.uniqueReach.toLocaleString("en-IN")} Unique Reach`
-                            : typeof hoarding.uniqueFootfall === "number" &&
-                                hoarding.uniqueFootfall > 0
-                              ? `${hoarding.uniqueFootfall.toLocaleString("en-IN")} Footfall`
                               : "N/A"}
                         </span>
                       </div>

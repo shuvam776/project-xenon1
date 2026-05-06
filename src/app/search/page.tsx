@@ -15,7 +15,7 @@ interface Hoarding {
   location: {
     address: string;
     city: string;
-    area: string;
+
     state: string;
   };
   type: string;

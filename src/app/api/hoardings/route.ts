@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       location: {
         address: data.address,
         city: data.city,
-        area: data.area,
+
         state: data.state,
         zipCode: data.zipCode,
         ...((data.latitude && data.longitude) ? { coordinates: { lat: data.latitude, lng: data.longitude } } : {})
@@ -143,10 +143,10 @@ export async function POST(req: Request) {
       lightingType: data.lightingType,
       pricePerMonth: data.pricePerMonth,
       minimumBookingAmount: data.minimumBookingAmount || 0,
-      hoardingCode: data.hoardingCode,
-      trafficFrom: data.trafficFrom,
+
+
       uniqueReach: data.uniqueReach,
-      uniqueFootfall: data.uniqueFootfall,
+
       images: data.images || [],
       owner: user._id,
       status: 'approved' // Auto-publish immediately

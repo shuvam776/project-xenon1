@@ -6,7 +6,7 @@ export interface IHoarding extends Document {
   location: {
     address: string;
     city: string;
-    area: string;
+
     state: string;
     zipCode?: string;
     coordinates?: {
@@ -27,9 +27,9 @@ export interface IHoarding extends Document {
   owner: mongoose.Types.ObjectId;
   status: 'pending' | 'approved' | 'rejected';
   uniqueReach?: number;
-  uniqueFootfall?: number;
-  hoardingCode?: string;
-  trafficFrom?: string;
+
+
+
   structureType?: string;
   availabilityStatus?: string;
   availability: {
@@ -45,7 +45,7 @@ const HoardingSchema: Schema<IHoarding> = new Schema({
   location: {
     address: { type: String, required: true },
     city: { type: String, required: true, index: true },
-    area: { type: String, required: true },
+
     state: { type: String, required: true },
     zipCode: { type: String },
     coordinates: {
@@ -60,7 +60,7 @@ const HoardingSchema: Schema<IHoarding> = new Schema({
   type: { 
     type: String, 
     required: true,
-    enum: ["Billboard", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"]
+    enum: ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"]
   },
   lightingType: {
     type: String,
@@ -79,9 +79,8 @@ const HoardingSchema: Schema<IHoarding> = new Schema({
     default: 'approved'
   },
   uniqueReach: { type: Number },
-  uniqueFootfall: { type: Number },
-  hoardingCode: { type: String },
-  trafficFrom: { type: String },
+
+
   structureType: { type: String },
   availabilityStatus: { type: String, default: 'Immediately' },
   availability: {
@@ -95,7 +94,7 @@ const HoardingSchema: Schema<IHoarding> = new Schema({
   timestamps: true
 });
 
-HoardingSchema.index({ 'location.city': 'text', 'location.address': 'text', name: 'text' });
+HoardingSchema.index({ name: 'text', description: 'text', 'location.city': 'text', 'location.address': 'text' });
 
 if (process.env.NODE_ENV === 'development') {
     delete mongoose.models.Hoarding;

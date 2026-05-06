@@ -23,7 +23,7 @@ export default function AboutPage() {
               <div className="mt-12 flex flex-wrap gap-10">
                   <div className="flex flex-col">
                       <span className="text-4xl font-black text-slate-900">10k+</span>
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Premium Boards</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Premium Hoardings</span>
                   </div>
                   <div className="flex flex-col">
                       <span className="text-4xl font-black text-slate-900">24/7</span>
@@ -33,13 +33,13 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Right Column: Billboard Image & Floating Attached Features */}
+          {/* Right Column: Hoarding Image & Floating Attached Features */}
           <div className="relative h-full w-full min-h-[600px] flex items-center justify-center mt-12 lg:mt-0">
             {/* Image Container */}
             <div className="relative w-full max-w-sm lg:max-w-md aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/20 border-8 border-white mx-auto z-10">
               <Image
-                src="/billboard.jpg"
-                alt="HoardSpace Premium Billboard"
+                src="/hoarding.jpg"
+                alt="HoardSpace Premium Hoarding"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"

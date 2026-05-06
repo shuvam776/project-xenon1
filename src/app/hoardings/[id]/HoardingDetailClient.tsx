@@ -342,7 +342,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
     setEnquiryRoleMessage("");
     setEnquirySuccessMessage("");
     setEnquiryText(
-      `Hi, I want to enquire about "${hoarding.name}" (${hoarding.hoardingCode || hoarding._id}) in ${hoarding.location.city}.`,
+      `Hi, I want to enquire about "${hoarding.name}" in ${hoarding.location.city}.`,
     );
     setIsEnquiryModalOpen(true);
   };
@@ -401,10 +401,10 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
   };
 
   const propertyDetails = [
-    { label: "Property Code", value: hoarding.hoardingCode || "N/A", icon: Tag },
-    { label: "Property Type", value: hoarding.type || "Billboard", icon: Maximize },
+
+    { label: "Property Type", value: hoarding.type || "Hoarding", icon: Maximize },
     { label: "Lit Type", value: hoarding.lightingType || "Non-Lit", icon: Zap },
-    { label: "Traffic From", value: hoarding.trafficFrom || "N/A", icon: Truck },
+
     { label: "Size (W x H)", value: `${hoarding.dimensions?.width || 0} x ${hoarding.dimensions?.height || 0} Feet`, icon: Maximize },
     { label: "Square Feet", value: `${(hoarding.dimensions?.width || 0) * (hoarding.dimensions?.height || 0)} sq ft`, icon: Maximize },
     {
@@ -414,13 +414,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
         : "N/A",
       icon: User,
     },
-    {
-      label: "Footfall Data",
-      value: hoarding.uniqueFootfall
-        ? `${hoarding.uniqueFootfall} unique footfall/ week`
-        : "N/A",
-      icon: User,
-    },
+
     { label: "Structure Type", value: hoarding.structureType || "Hoarding", icon: Maximize },
     { label: "Available", value: hoarding.availabilityStatus || "Immediately", icon: Clock },
   ];
@@ -527,7 +521,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4 pb-4 border-b border-gray-50">Description</h2>
             <p className="text-gray-600 leading-relaxed italic text-[15px]">
-              {hoarding.description || "This large format billboard is strategically located on the busy road, facing traffic moving towards major hubs. Excellent visibility near educational institutions and residential areas. Ideal for targeting students, professionals, and local residents. Front-lit for nighttime visibility."}
+              {hoarding.description || "This large format hoarding is strategically located on the busy road, facing traffic moving towards major hubs. Excellent visibility near educational institutions and residential areas. Ideal for targeting students, professionals, and local residents. Front-lit for nighttime visibility."}
             </p>
           </div>
         </div>

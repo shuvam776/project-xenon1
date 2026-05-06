@@ -371,7 +371,7 @@ export default function BookingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user?._id,
-          content: `Inquiry regarding hoarding: ${hoarding.name} (ID: ${hoarding.hoardingCode})`,
+          content: `Inquiry regarding hoarding: ${hoarding.name}`,
           subject: "Hoarding Inquiry",
           type: "query",
         }),
@@ -450,20 +450,14 @@ export default function BookingPage() {
               </h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
                 {[
-                  {
-                    label: "Property Code",
-                    value: hoarding.hoardingCode || "RHU-PAT-001",
-                  },
+
                   { label: "Property Type", value: hoarding.type },
                   { label: "Lit Type", value: hoarding.lightingType },
                   {
                     label: "Front Lit",
                     value: hoarding.lightingType === "Front Lit" ? "Yes" : "No",
                   },
-                  {
-                    label: "Traffic From",
-                    value: hoarding.trafficFrom || "Main Road",
-                  },
+
                   {
                     label: "Size (WxH)",
                     value: `${hoarding.dimensions.width} x ${hoarding.dimensions.height} Feet`,

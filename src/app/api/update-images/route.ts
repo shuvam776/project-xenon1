@@ -7,7 +7,7 @@ export async function GET() {
     await dbConnect();
     
     await Hoarding.updateOne(
-      { "location.city": "Bhubaneswar", name: "Premium Billboard - Master Plan Area" },
+      { "location.city": "Bhubaneswar", name: "Premium Hoarding - Master Plan Area" },
       { $set: { images: ["/bbsr.png"] } }
     );
 

@@ -60,7 +60,7 @@ export default function EditHoardingPage() {
       description: "",
       address: "",
       city: "",
-      area: "",
+
       state: "",
       zipCode: "",
       latitude: 0,
@@ -69,12 +69,12 @@ export default function EditHoardingPage() {
       height: 0,
       pricePerMonth: 0,
       lightingType: "Non-Lit",
-      type: "Billboard",
+      type: "Hoarding",
       images: [],
-      hoardingCode: "",
-      trafficFrom: "",
+
+
       uniqueReach: 0,
-      uniqueFootfall: 0,
+
       minimumBookingMonths: 1,
       minimumBookingAmount: 0,
     },
@@ -129,7 +129,7 @@ export default function EditHoardingPage() {
           description: hoarding.description || "",
           address: hoarding.location.address,
           city: hoarding.location.city,
-          area: hoarding.location.area,
+
           state: hoarding.location.state,
           zipCode: hoarding.location.zipCode || "",
           latitude: hoarding.location.coordinates?.lat,
@@ -141,10 +141,10 @@ export default function EditHoardingPage() {
           pricePerMonth: hoarding.pricePerMonth,
           minimumBookingAmount: hoarding.minimumBookingAmount || 0,
           minimumBookingMonths: hoarding.minimumBookingMonths || 1,
-          hoardingCode: hoarding.hoardingCode || "",
-          trafficFrom: hoarding.trafficFrom || "",
+
+
           uniqueReach: hoarding.uniqueReach || 0,
-          uniqueFootfall: hoarding.uniqueFootfall || 0,
+
           images: hoarding.images || [],
         });
 
@@ -227,12 +227,7 @@ export default function EditHoardingPage() {
             shouldDirty: true,
           });
         }
-        if (locationData.area) {
-          setValue("area", locationData.area, {
-            shouldValidate: true,
-            shouldDirty: true,
-          });
-        }
+
         if (locationData.lat && locationData.lng) {
           setValue("latitude", locationData.lat, { shouldValidate: true });
           setValue("longitude", locationData.lng, { shouldValidate: true });
@@ -250,7 +245,7 @@ export default function EditHoardingPage() {
     city?: string;
     state?: string;
     zipCode?: string;
-    area?: string;
+
     lat: number;
     lng: number;
   }) => {
@@ -278,12 +273,7 @@ export default function EditHoardingPage() {
         shouldDirty: true,
       });
     }
-    if (location.area) {
-      setValue("area", location.area, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    }
+
     setValue("latitude", location.lat, { shouldValidate: true, shouldDirty: true });
     setValue("longitude", location.lng, { shouldValidate: true, shouldDirty: true });
   };
@@ -409,7 +399,7 @@ export default function EditHoardingPage() {
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Property Title</label>
                   <input
                     {...register("name")}
-                    placeholder="e.g. Billboard at Birsha Chawk"
+                    placeholder="e.g. Hoarding at Birsha Chawk"
                     className={`w-full px-5 py-4 bg-gray-50/50 border-2 ${errors.name ? 'border-red-100 focus:border-red-500' : 'border-transparent focus:border-blue-600'} rounded-2xl outline-none font-bold text-gray-700 transition-all focus:bg-white`}
                   />
                   {errors.name && (
@@ -472,7 +462,7 @@ export default function EditHoardingPage() {
                       <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                         <Plus size={20} />
                       </div>
-                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Add Asset</span>
+                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Upload hoarding image</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -487,7 +477,7 @@ export default function EditHoardingPage() {
 
             {/* Location & Map Section */}
             <section className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-blue-900/5 rounded-[2.5rem] p-8 md:p-10 space-y-8 transition-all hover:shadow-blue-900/10">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center">
                     <Globe size={24} />
@@ -497,24 +487,10 @@ export default function EditHoardingPage() {
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Precise geolocating</p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowMap(!showMap)}
-                  className={`text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl transition-all flex items-center gap-2 ${showMap ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
-                >
-                  <MapPin size={16} />
-                  {showMap ? "Confirm Location" : "Show Map View"}
-                </button>
+
               </div>
 
-              {showMap && (
-                <div className="rounded-[2rem] overflow-hidden border-4 border-white shadow-xl animate-in zoom-in duration-500">
-                  <MapLocationPicker 
-                    onLocationSelect={handleMapLocationSelect} 
-                    searchAddress={[watch("address"), watch("area"), watch("city"), watch("state")].filter(Boolean).join(", ")}
-                  />
-                </div>
-              )}
+
 
               <input type="hidden" {...register("latitude", { valueAsNumber: true })} />
               <input type="hidden" {...register("longitude", { valueAsNumber: true })} />
@@ -556,14 +532,7 @@ export default function EditHoardingPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Area</label>
-                  <input
-                    {...register("area")}
-                    placeholder="Area"
-                    className="w-full px-5 py-4 bg-gray-50/50 border-2 border-transparent focus:border-blue-600 rounded-2xl outline-none font-bold text-gray-700 transition-all focus:bg-white"
-                  />
-                </div>
+
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">State</label>
@@ -573,6 +542,13 @@ export default function EditHoardingPage() {
                     className="w-full px-5 py-4 bg-gray-50/50 border-2 border-transparent focus:border-blue-600 rounded-2xl outline-none font-bold text-gray-700 transition-all focus:bg-white"
                   />
                 </div>
+              </div>
+
+              <div className="rounded-[2rem] overflow-hidden border-4 border-white shadow-xl mt-6">
+                <MapLocationPicker 
+                  onLocationSelect={handleMapLocationSelect} 
+                  searchAddress={[watch("address"), watch("city"), watch("state")].filter(Boolean).join(", ")}
+                />
               </div>
             </section>
           </div>
@@ -599,7 +575,7 @@ export default function EditHoardingPage() {
                         {...register("type")}
                         className="w-full px-4 py-3.5 bg-gray-50 border-none rounded-xl font-bold text-gray-700 focus:ring-2 focus:ring-blue-600 outline-none appearance-none"
                       >
-                        <option value="Billboard">Billboard</option>
+                        <option value="Hoarding">Hoarding</option>
                         <option value="Unipole">Unipole</option>
                         <option value="Gantry">Gantry</option>
                         <option value="Bus Shelter">Bus Shelter</option>
@@ -665,16 +641,8 @@ export default function EditHoardingPage() {
                     <span className="text-[10px] font-black uppercase tracking-widest">Property Metadata</span>
                   </div>
                   <div className="grid grid-cols-1 gap-3">
-                    <input
-                      {...register("hoardingCode")}
-                      placeholder="Unique Property Code"
-                      className="w-full px-4 py-2.5 bg-white border border-indigo-100 rounded-xl text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-indigo-600"
-                    />
-                    <input
-                      {...register("trafficFrom")}
-                      placeholder="Daily Traffic Flow"
-                      className="w-full px-4 py-2.5 bg-white border border-indigo-100 rounded-xl text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-indigo-600"
-                    />
+
+
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
@@ -685,14 +653,7 @@ export default function EditHoardingPage() {
                         className="w-full px-2 py-1.5 bg-white border border-indigo-100 rounded-lg text-xs font-bold"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">Footfall/Wk</label>
-                      <input
-                        {...register("uniqueFootfall", { valueAsNumber: true })}
-                        type="number"
-                        className="w-full px-2 py-1.5 bg-white border border-indigo-100 rounded-lg text-xs font-bold"
-                      />
-                    </div>
+
                   </div>
                 </div>
 

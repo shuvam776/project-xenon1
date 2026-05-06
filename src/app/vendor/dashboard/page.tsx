@@ -8,6 +8,8 @@ import "@fontsource/chiron-goround-tc";
 import MapLocationPicker from "@/components/MapLocationPicker";
 import { getLocationFromPincode, isValidIndianPincode } from "@/lib/googleMaps";
 import {
+  Building2,
+  Ruler,
   LayoutDashboard,
   Box,
   BadgeCheck,
@@ -36,10 +38,10 @@ import {
 interface Hoarding {
   _id: string;
   name: string;
-  hoardingCode?: string;
-  trafficFrom?: string;
+
+
   uniqueReach?: number;
-  uniqueFootfall?: number;
+
   location: {
     address: string;
     city: string;
@@ -135,21 +137,21 @@ export default function VendorDashboard() {
     description: "",
     address: "",
     city: "",
-    area: "",
+
     state: "",
     zipCode: "",
     latitude: 0,
     longitude: 0,
     width: 0,
     height: 0,
-    type: "Billboard",
+    type: "Hoarding",
     lightingType: "Lit",
     pricePerMonth: 0,
     minimumBookingMonths: 1,
-    hoardingCode: "",
-    trafficFrom: "",
+
+
     uniqueReach: 0,
-    uniqueFootfall: 0,
+
     images: [""]
   });
   const [pincodeLoading, setPincodeLoading] = useState(false);
@@ -460,7 +462,7 @@ export default function VendorDashboard() {
           ...prev,
           city: loc.city || prev.city,
           state: loc.state || prev.state,
-          area: loc.area || prev.area,
+
           latitude: loc.lat || prev.latitude,
           longitude: loc.lng || prev.longitude
         }));
@@ -479,7 +481,7 @@ export default function VendorDashboard() {
       city: location.city || prev.city,
       state: location.state || prev.state,
       zipCode: location.zipCode || prev.zipCode,
-      area: location.area || prev.area,
+
       latitude: location.lat,
       longitude: location.lng
     }));
@@ -521,7 +523,7 @@ export default function VendorDashboard() {
         height: Number(newHoarding.height),
         pricePerMonth: Number(newHoarding.pricePerMonth),
         uniqueReach: Number(newHoarding.uniqueReach) || 0,
-        uniqueFootfall: Number(newHoarding.uniqueFootfall) || 0,
+
       };
 
       if (!cleanedHoarding.pricePerMonth || cleanedHoarding.pricePerMonth < 1) {
@@ -555,20 +557,20 @@ export default function VendorDashboard() {
           description: "",
           address: "",
           city: "",
-          area: "",
+
           state: "",
           zipCode: "",
           latitude: 0,
           longitude: 0,
           width: 0,
           height: 0,
-          type: "Billboard",
+          type: "Hoarding",
           lightingType: "Lit",
           pricePerMonth: 0,
-          hoardingCode: "",
-          trafficFrom: "",
+
+
           uniqueReach: 0,
-          uniqueFootfall: 0,
+
           images: [""]
         });
       } else {
@@ -984,364 +986,270 @@ export default function VendorDashboard() {
                </button>
              </div>
 
-             <form onSubmit={handleCreateHoarding} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Property Name</label>
-                     <input 
+             <form onSubmit={handleCreateHoarding} className="space-y-6">
+                {/* Basic Details Section */}
+                <div className="bg-gray-50/50 p-6 rounded-[2.5rem] border border-gray-100 space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building2 className="text-blue-600" size={18} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Primary Info</span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Property Name / Title</label>
+                    <input 
                       required
                       type="text" 
-                      placeholder="e.g. Billboard kiit square patia"
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
+                      placeholder="e.g. Hoarding at KIIT Square"
+                      className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
                       value={newHoarding.name}
                       onChange={(e) => setNewHoarding({...newHoarding, name: e.target.value})}
-                     />
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Board Type</label>
-                     <select 
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none"
-                      value={newHoarding.type}
-                      onChange={(e) => setNewHoarding({...newHoarding, type: e.target.value})}
-                     >
-                       <option>Billboard</option>
-                       <option>Unipole</option>
-                       <option>Gantry</option>
-                       <option>Bus Shelter</option>
-                       <option>Kiosk</option>
-                       <option>Other</option>
-                     </select>
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Description</label>
-                  <textarea 
-                    placeholder="Describe visibility, traffic, and surroundings..."
-                    className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 h-32 resize-none"
-                    value={newHoarding.description}
-                    onChange={(e) => setNewHoarding({...newHoarding, description: e.target.value})}
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-1">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Location Details</label>
-                    <button 
-                      type="button"
-                      onClick={() => setShowMap(!showMap)}
-                      className="text-[10px] font-black text-blue-600 uppercase hover:underline flex items-center gap-1"
-                    >
-                      <MapPin size={12} /> {showMap ? "Hide Map" : "Pin on Map *"}
-                    </button>
+                    />
                   </div>
 
-                  <p className="text-[10px] font-bold text-gray-400 px-1">
-                    Price and map pin are required before submitting.
-                  </p>
-
-                  {showMap && (
-                    <div className="border border-gray-100 rounded-3xl overflow-hidden mb-4">
-                      <MapLocationPicker 
-                        onLocationSelect={handleMapLocationSelectModal} 
-                        searchAddress={[newHoarding.address, newHoarding.area, newHoarding.city, newHoarding.state].filter(Boolean).join(", ")}
-                      />
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="space-y-2 lg:col-span-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Full Address</label>
-                       <input 
-                        required
-                        type="text" 
-                        className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                        value={newHoarding.address}
-                        onChange={(e) => setNewHoarding({...newHoarding, address: e.target.value})}
-                       />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Board Type</label>
+                      <select 
+                        className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
+                        value={newHoarding.type}
+                        onChange={(e) => setNewHoarding({...newHoarding, type: e.target.value})}
+                      >
+                        <option>Hoarding</option>
+                        <option>Unipole</option>
+                        <option>Gantry</option>
+                        <option>Bus Shelter</option>
+                        <option>Kiosk</option>
+                        <option>Other</option>
+                      </select>
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Zip Code</label>
-                       <div className="relative">
-                         <input 
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Lighting</label>
+                      <select 
+                        className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
+                        value={newHoarding.lightingType}
+                        onChange={(e) => setNewHoarding({...newHoarding, lightingType: e.target.value})}
+                      >
+                        <option value="Lit">Lit</option>
+                        <option value="Non-Lit">Non-Lit</option>
+                        <option value="Front Lit">Front Lit</option>
+                        <option value="Back Lit">Back Lit</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Description</label>
+                    <textarea 
+                      placeholder="Describe visibility, daily traffic flow, and surrounding landmarks..."
+                      className="w-full px-5 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 h-24 resize-none shadow-sm"
+                      value={newHoarding.description}
+                      onChange={(e) => setNewHoarding({...newHoarding, description: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                {/* Location Section */}
+                <div className="bg-blue-50/20 p-6 rounded-[2.5rem] border border-blue-50 space-y-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="text-blue-600" size={18} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Location Details</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2 space-y-2">
+                      <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest px-1">Full Address</label>
+                      <input 
+                        required
+                        type="text" 
+                        placeholder="Street, Landmark..."
+                        className="w-full px-5 py-3.5 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
+                        value={newHoarding.address}
+                        onChange={(e) => setNewHoarding({...newHoarding, address: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest px-1">Zip Code</label>
+                      <div className="relative">
+                        <input 
                           required
                           type="text" 
                           placeholder="6-Digit PIN"
-                          className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
+                          className="w-full px-5 py-3.5 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
                           value={newHoarding.zipCode}
                           onChange={handlePincodeChangeModal}
-                         />
-                         {pincodeLoading && <Loader2 className="absolute right-4 top-4 animate-spin text-blue-600" size={16} />}
-                       </div>
+                        />
+                        {pincodeLoading && <Loader2 className="absolute right-4 top-3.5 animate-spin text-blue-600" size={16} />}
+                      </div>
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">City</label>
-                       <select
+                      <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest px-1">City</label>
+                      <select
                         required
-                        className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
+                        className="w-full px-5 py-3.5 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
                         value={newHoarding.city}
                         onChange={(e) => {
                           const selectedCity = e.target.value;
                           setNewHoarding({
                             ...newHoarding,
                             city: selectedCity,
-                            state:
-                              CITY_OPTIONS.includes(selectedCity) &&
-                              !newHoarding.state.trim()
-                                ? "Odisha"
-                                : newHoarding.state,
+                            state: CITY_OPTIONS.includes(selectedCity) && !newHoarding.state.trim() ? "Odisha" : newHoarding.state,
                           });
                         }}
-                       >
-                         <option value="" disabled>
-                           Select city
-                         </option>
-                         {CITY_OPTIONS.map((city) => (
-                           <option key={city} value={city}>
-                             {city}, Odisha
-                           </option>
-                         ))}
-                       </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Area</label>
-                       <input 
-                        required
-                        type="text" 
-                        className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                        value={newHoarding.area}
-                        onChange={(e) => setNewHoarding({...newHoarding, area: e.target.value})}
-                       />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">State</label>
-                       <input 
-                        required
-                        type="text" 
-                        className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                        value={newHoarding.state}
-                        onChange={(e) => setNewHoarding({...newHoarding, state: e.target.value})}
-                       />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2 text-center md:text-left">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 block">Width (ft)</label>
-                      <input 
-                       required
-                       type="number" 
-                       className="w-24 md:w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 text-center"
-                       value={newHoarding.width}
-                       onChange={(e) => setNewHoarding({...newHoarding, width: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-2 text-center md:text-left">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 block">Height (ft)</label>
-                      <input 
-                       required
-                       type="number" 
-                       className="w-24 md:w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 text-center"
-                       value={newHoarding.height}
-                       onChange={(e) => setNewHoarding({...newHoarding, height: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Lighting</label>
-                     <div className="flex gap-2">
-                        {["Lit", "Non-Lit", "Front Lit", "Back Lit"].map((type) => (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() => setNewHoarding({...newHoarding, lightingType: type})}
-                            className={`flex-1 py-3 text-[10px] font-black rounded-xl transition-all border ${
-                              newHoarding.lightingType === type 
-                                ? "bg-blue-600 text-white border-blue-600 shadow-md" 
-                                : "bg-white text-gray-400 border-gray-100 hover:border-gray-200"
-                            }`}
-                          >
-                            {type}
-                          </button>
+                      >
+                        <option value="" disabled>Select city</option>
+                        {CITY_OPTIONS.map((city) => (
+                          <option key={city} value={city}>{city}, Odisha</option>
                         ))}
-                     </div>
-                   </div>
-                    <div className="space-y-4">
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
+                    <MapLocationPicker 
+                      onLocationSelect={handleMapLocationSelectModal} 
+                      searchAddress={[newHoarding.address, newHoarding.city, newHoarding.state].filter(Boolean).join(", ")}
+                    />
+                  </div>
+                </div>
+
+                {/* Specs & Business Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50/50 p-6 rounded-[2.5rem] border border-gray-100 space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Ruler className="text-blue-600" size={18} />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Dimensions</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Price / Month</label>
-                        <div className="relative">
-                          <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">₹</span>
-                          <input 
-                            required
-                            type="number" 
-                            min="1"
-                            className="w-full pl-10 pr-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                            value={newHoarding.pricePerMonth}
-                            onChange={(e) => setNewHoarding({...newHoarding, pricePerMonth: e.target.value})}
-                          />
-                        </div>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 text-center block">Width (ft)</label>
+                        <input 
+                          required
+                          type="number" 
+                          className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 text-center shadow-sm"
+                          value={newHoarding.width}
+                          onChange={(e) => setNewHoarding({...newHoarding, width: e.target.value})}
+                        />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Minimum Booking Period (Months)</label>
-                        <select 
-                          className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none"
-                          value={newHoarding.minimumBookingMonths || 1}
-                          onChange={(e) => setNewHoarding({...newHoarding, minimumBookingMonths: Number(e.target.value)})}
-                        >
-                          {[1, 2, 3, 6, 12].map(m => (
-                            <option key={m} value={m}>{m} Month{m > 1 ? 's' : ''}</option>
-                          ))}
-                        </select>
-                        <p className="text-[10px] font-bold text-blue-500 mt-1 px-1">Default is 1 month if not selected.</p>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 text-center block">Height (ft)</label>
+                        <input 
+                          required
+                          type="number" 
+                          className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 text-center shadow-sm"
+                          value={newHoarding.height}
+                          onChange={(e) => setNewHoarding({...newHoarding, height: e.target.value})}
+                        />
                       </div>
-                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Property Code
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Optional code"
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                      value={newHoarding.hoardingCode}
-                      onChange={(e) =>
-                        setNewHoarding({
-                          ...newHoarding,
-                          hoardingCode: e.target.value,
-                        })
-                      }
-                    />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Traffic From
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Main road, market, highway..."
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                      value={newHoarding.trafficFrom}
-                      onChange={(e) =>
-                        setNewHoarding({
-                          ...newHoarding,
-                          trafficFrom: e.target.value,
-                        })
-                      }
-                    />
+
+                  <div className="bg-gray-50/50 p-6 rounded-[2.5rem] border border-gray-100 space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <IndianRupee className="text-blue-600" size={18} />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Commercials</span>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Price / Month</label>
+                      <div className="relative">
+                        <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-blue-600">₹</span>
+                        <input 
+                          required
+                          type="number" 
+                          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-black text-gray-700 shadow-sm"
+                          value={newHoarding.pricePerMonth}
+                          onChange={(e) => setNewHoarding({...newHoarding, pricePerMonth: e.target.value})}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Unique Traffic / Week
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="Optional"
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                      value={newHoarding.uniqueReach}
-                      onChange={(e) =>
-                        setNewHoarding({
-                          ...newHoarding,
-                          uniqueReach: e.target.value,
-                        })
-                      }
-                    />
+                {/* Additional Insight & Media */}
+                <div className="bg-gray-50 p-6 rounded-[2.5rem] border border-gray-100 space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Reach / Week</label>
+                      <input
+                        type="number"
+                        placeholder="Optional"
+                        className="w-full px-5 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
+                        value={newHoarding.uniqueReach}
+                        onChange={(e) => setNewHoarding({...newHoarding, uniqueReach: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Min Period (Mo)</label>
+                      <select 
+                        className="w-full px-5 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
+                        value={newHoarding.minimumBookingMonths || 1}
+                        onChange={(e) => setNewHoarding({...newHoarding, minimumBookingMonths: Number(e.target.value)})}
+                      >
+                        {[1, 2, 3, 6, 12].map(m => (
+                          <option key={m} value={m}>{m} Month{m > 1 ? 's' : ''}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                      Unique Footfall / Week
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="Optional"
-                      className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700"
-                      value={newHoarding.uniqueFootfall}
-                      onChange={(e) =>
-                        setNewHoarding({
-                          ...newHoarding,
-                          uniqueFootfall: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1 block">Property Images (Upload)</label>
-                  {newHoarding.images.map((url: string, index: number) => (
-                    <div key={index} className="flex gap-2">
-                      {url ? (
-                        <div className="flex-1 relative rounded-2xl overflow-hidden bg-gray-100 h-16 flex items-center justify-center">
-                           <img src={url} className="absolute inset-0 w-full h-full object-cover" />
-                           <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                             <a href={url} target="_blank" className="text-white text-xs font-bold">View</a>
-                           </div>
-                        </div>
-                      ) : (
-                        <div className="flex-1 relative px-5 py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl focus-within:ring-2 focus-within:ring-blue-600 outline-none flex items-center justify-center min-h-[64px] hover:bg-gray-100 transition-colors">
-                          {uploading ? (
-                            <Loader2 className="animate-spin text-blue-600" size={20} />
-                          ) : (
-                            <>
-                              <span className="text-sm font-bold text-gray-700">Click to Upload to Cloudinary</span>
-                              <input 
-                                type="file" 
-                                accept="image/*"
-                                onChange={(e) => handleImageUpload(e, index)}
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                              />
-                            </>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Property Images</label>
+                      <button 
+                        type="button"
+                        onClick={() => setNewHoarding({...newHoarding, images: [...newHoarding.images, ""]})}
+                        className="flex items-center gap-1.5 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors"
+                      >
+                        <PlusCircle size={14} /> Add One More
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {newHoarding.images.map((url: string, index: number) => (
+                        <div key={index} className="relative group bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-xl border-2 border-dashed border-gray-100 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {url ? <img src={url} className="w-full h-full object-cover" /> : <ImageIcon className="text-gray-200" size={18} />}
+                            <input 
+                              type="file" 
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(e, index)}
+                              className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest truncate">{url ? 'Selected' : 'Click to Upload'}</p>
+                            <p className="text-[9px] font-bold text-blue-500 truncate whitespace-nowrap overflow-hidden">{url || 'hording_image.jpg'}</p>
+                          </div>
+                          {newHoarding.images.length > 1 && (
+                            <button 
+                              type="button"
+                              onClick={() => {
+                                const updated = newHoarding.images.filter((_: any, i: number) => i !== index);
+                                setNewHoarding({...newHoarding, images: updated});
+                              }}
+                              className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                            >
+                              <Trash2 size={16} />
+                            </button>
                           )}
                         </div>
-                      )}
-                      {index === newHoarding.images.length - 1 ? (
-                        <button 
-                          type="button"
-                          onClick={() => setNewHoarding({...newHoarding, images: [...newHoarding.images, ""]})}
-                          className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-100 transition-colors self-start"
-                        >
-                          <PlusCircle size={24} />
-                        </button>
-                      ) : (
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            const updated = newHoarding.images.filter((_: any, i: number) => i !== index);
-                            setNewHoarding({...newHoarding, images: updated});
-                          }}
-                          className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors self-start"
-                        >
-                          <Trash2 size={24} />
-                        </button>
-                      )}
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                {/* Submit Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
                    <button 
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="flex-1 py-5 bg-gray-50 text-gray-500 rounded-2xl font-black text-sm hover:bg-gray-100 transition-all"
+                    className="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-black text-sm hover:bg-gray-200 transition-all"
                    >
                      Cancel
                    </button>
                    <button 
                     type="submit"
                     disabled={loading}
-                    className="flex-[2] py-5 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-2 disabled:bg-blue-400"
+                    className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 disabled:bg-blue-400"
                    >
                      {loading ? <Loader2 className="animate-spin" size={20} /> : <BadgeCheck size={20} />}
                      List My Property
