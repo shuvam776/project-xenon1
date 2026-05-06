@@ -99,7 +99,7 @@ export default function Navbar() {
                         <Link href="/about" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                           About Us
                         </Link>
-                        <Link href="/#how-it-works" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                        <Link href="/how-it-works" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                           How It Works
                         </Link>
                         <Link href="/contact" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
@@ -116,7 +116,7 @@ export default function Navbar() {
                     <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
                       Explore
                     </Link>
-                    <Link href="/#how-it-works" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
+                    <Link href="/how-it-works" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
                       How It Works
                     </Link>
                     <Link href="/about" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
@@ -231,7 +231,7 @@ export default function Navbar() {
                 )}
                 
                 <Link 
-                  href="/#how-it-works" 
+                  href="/how-it-works" 
                   onClick={() => setIsMenuOpen(false)}
                   className="px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all block w-full text-left"
                 >

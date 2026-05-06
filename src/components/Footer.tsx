@@ -15,11 +15,6 @@ export default function Footer() {
 
   const currentYear = new Date().getFullYear();
 
-  const quickLinks = [
-    { name: "About Us", href: "/about" },
-    { name: "Contact Us", href: "/contact" },
-  ];
-
   const categories = [
     { name: "Billboard", href: "/search?type=Billboard" },
     { name: "Unipole", href: "/search?type=Unipole" },
@@ -41,316 +36,191 @@ export default function Footer() {
     { name: "Cookie Policy", href: "/cookie-policy" },
   ];
 
+  const sponsors = [
+    { name: "MeitY", src: "/logos/IMG_2179.PNG", link: "https://msh.meity.gov.in/" },
+    { name: "MSME", src: "/logos/IMG_2180.JPG", link: "https://msme.gov.in/" },
+    { name: "NIT Rourkela", src: "/logos/IMG_2181.PNG", link: "https://www.nitrkl.ac.in/" },
+    { name: "FTBI", src: "/logos/IMG_2182.PNG", link: "https://www.ftbi-nitrkl.org/" },
+    { name: "Startup Odisha", src: "/logos/IMG_2183.PNG", link: "https://startupodisha.gov.in/" },
+    { name: "Startup India", src: "/logos/IMG_2184.JPG", link: "https://www.startupindia.gov.in/" },
+  ];
+
   return (
-    <footer className="bg-gradient-to-b from-gray-50 to-blue-100/80 text-slate-800 pt-10 pb-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          {/* Company Info */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-4">
+    <footer className="bg-white border-t border-slate-100 w-full overflow-hidden">
+        
+      {/* Sponsors Carousel Section */}
+      <div className="border-b border-slate-100 bg-slate-50/50 py-8 overflow-hidden relative w-full">
+        <div className="flex w-[200%] animate-marquee">
+          {/* Double the array for seamless scrolling */}
+          {[...sponsors, ...sponsors].map((sponsor, idx) => (
+            <a
+              key={idx}
+              href={sponsor.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-1/12 flex-shrink-0 flex items-center justify-center px-4 md:px-8 grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100"
+            >
+              <Image
+                src={sponsor.src}
+                alt={sponsor.name}
+                width={120}
+                height={60}
+                className="object-contain max-h-12 w-auto mix-blend-multiply"
+              />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8">
+          
+          {/* Left Column: Logo & Info */}
+          <div className="md:col-span-12 lg:col-span-4 space-y-6">
+            <Link href="/" className="inline-block">
               <Image
                 src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
                 alt="HoardSpace Logo"
                 width={180}
                 height={50}
-                className="h-12 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             </Link>
-            <p className="text-xs font-semibold tracking-wide text-slate-600 mb-6 max-w-sm">
-              India&apos;s leading platform for booking premium outdoor advertising
-              spaces. Connect with verified vendors and grow your brand's
-              visibility across top cities.
+            
+            <p className="text-sm font-medium text-slate-500 leading-relaxed max-w-sm">
+              India's leading platform for booking premium outdoor advertising spaces. Connect with verified vendors and grow your brand's visibility.
             </p>
-            {/* Contact Info */}
-            <div className="space-y-3">
-              <a
-                href="mailto:bookings@hoardspace.in"
-                className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
-              >
-                <Mail size={14} />
-                <span>bookings@hoardspace.in</span>
-              </a>
-              <a
-                href="tel:+917655052057"
-                className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
-              >
-                <Phone size={14} />
-                <span>7655-052057</span>
-              </a>
-              <a
-                href="https://www.google.com/maps/place/Hoardspace+bookings+private+limited/@22.2430295,84.9088836,3670m/data=!3m1!1e3!4m6!3m5!1s0x3a201dc4b4a548d5:0x7066c2143a6fd952!8m2!3d22.2548078!4d84.9031843!16s%2Fg%2F11yxhjq0k1?entry=ttu&g_ep=EgoyMDI2MDMwNC4xIKXMDSoASAFQAw%3D%3D"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-2 text-xs font-black uppercase tracking-widest text-slate-700 hover:text-[#2563eb] transition-colors"
-              >
-                <MapPin size={14} className="mt-0.5 shrink-0" />
-                <span>
-                  TI-103(A), First Floor, TIIR Building (FTBI),
-                  <br />
-                  NIT Rourkela Campus, Odisha - 769008
-                </span>
-              </a>
-            </div>
 
-          </div>
-
-          {/* Quick Links */}
-          {/* <div>
-            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
-              Quick Links
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
-          {/* Categories */}
-          <div>
-            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
-              Categories
-            </h3>
-            <ul className="space-y-3">
-              {categories.map((category) => (
-                <li key={category.name}>
-                  <Link
-                    href={category.href}
-                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Popular Cities */}
-          <div>
-            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
-              Popular Cities
-            </h3>
-            <ul className="space-y-3">
-              {popularCities.map((city) => (
-                <li key={city.name}>
-                  <Link
-                    href={city.href}
-                    className="text-xs font-bold tracking-wider text-slate-700 hover:text-[#2563eb] transition-colors block"
-                  >
-                    {city.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Registration Details */}
-          <div>
-            <h3 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">
-              Company Details
-            </h3>
-            <div className="space-y-1.5 text-[11px] font-bold tracking-wider text-slate-700">
-              <p>
-                Hoardspace Bookings Private Limited
-              </p>
-              <p>CIN NO: U63120OD2025PTC051640</p>
-              <p>PAN NO: AAICH3418E</p>
-              <p>TAN NO: BBNH01998D</p>
-              <p>CKYC NO: 90003349208072</p>
-              <p>GSTIN NO: 21AAICH3418E1Z3</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Links */}
-        <div className="border-t border-slate-300/30 pt-8 mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-              <h4 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em]">
-                Follow Us
-              </h4>
-            </div>
-            <div className="flex items-center gap-4">
-              <a
-                href="https://www.linkedin.com/company/hoardspace-bookings-private-limited"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={18} />
-              </a>
-              <a
-                href="https://x.com/hoardspace1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-black flex items-center justify-center transition-colors"
-                aria-label="X (formerly Twitter)"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="fill-white"
-                >
+            {/* Social Icons */}
+            <div className="flex items-center gap-4 pt-2">
+              <a href="https://x.com/hoardspace1" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-900 transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298l13.31 17.41z" />
                 </svg>
               </a>
-              <a
-                href="https://www.instagram.com/hoardspace/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4)] flex items-center justify-center transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={18} />
+              <a href="https://www.linkedin.com/company/hoardspace-bookings-private-limited" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors">
+                <Linkedin size={20} className="fill-current" />
               </a>
-              <a
-                href="https://www.youtube.com/@HoardSpace"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#ff0000] flex items-center justify-center transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube size={18} />
+              <a href="https://www.instagram.com/hoardspace/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-600 transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="https://www.youtube.com/@HoardSpace" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-600 transition-colors">
+                <Youtube size={22} className="fill-current" />
               </a>
             </div>
-          </div>
-        </div>
 
-        {/* Supported By Section */}
-        <div className="border-t border-slate-300/30 pt-8 mb-8">
-          <div className="text-center mb-6">
-            <h4 className="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em]">
-              Supported By
-            </h4>
+            {/* Status Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white shadow-sm mt-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-[11px] font-bold text-slate-600 tracking-wide">All systems operational</span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center justify-items-center">
-            <a
-              href="https://msh.meity.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2179.PNG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-            <a
-              href="https://msme.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2180.JPG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-            <a
-              href="https://www.nitrkl.ac.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2181.PNG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-            <a
-              href="https://www.ftbi-nitrkl.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2182.PNG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-            <a
-              href="https://startupodisha.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2183.PNG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-            <a
-              href="https://www.startupindia.gov.in/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors w-full h-20 flex items-center justify-center"
-            >
-              <Image
-                src="/logos/IMG_2184.JPG"
-                alt="Institution Logo"
-                width={100}
-                height={60}
-                className="object-contain max-h-12 w-auto"
-              />
-            </a>
-          </div>
-        </div>
 
-        {/* Legal Links */}
-        <div className="border-t border-blue-400/20 pt-8 mb-8">
-          <div className="flex flex-wrap justify-center gap-6">
-            {legal.map((link, index) => (
-              <Fragment key={link.name}>
-                <Link
-                  href={link.href}
-                  className="text-sm hover:text-orange-400 transition-colors"
-                >
-                  {link.name}
-                </Link>
-                {index < legal.length - 1 && (
-                  <span className="text-blue-300/50">|</span>
-                )}
-              </Fragment>
-            ))}
-          </div>
-        </div>
+          {/* Links Columns */}
+          <div className="md:col-span-12 lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
+            
+            {/* Column 1 */}
+            <div>
+              <h3 className="text-sm font-black text-slate-900 mb-6">Categories</h3>
+              <ul className="space-y-4">
+                {categories.map((category) => (
+                  <li key={category.name}>
+                    <Link href={category.href} className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        {/* Copyright */}
-        <div className="border-t border-slate-300/30 pt-8">
-          <div className="text-center">
-            <p className="text-[11px] font-black tracking-widest text-slate-500 uppercase">
-              &copy; {currentYear} HoardSpace. All rights reserved.
-            </p>
+            {/* Column 2 */}
+            <div>
+              <h3 className="text-sm font-black text-slate-900 mb-6">Explore</h3>
+              <ul className="space-y-4">
+                {popularCities.map((city) => (
+                  <li key={city.name}>
+                    <Link href={city.href} className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                      {city.name}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href="/explore" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1">
+                    All Cities <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-1.5 py-0.5 rounded ml-1">New</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3 */}
+            <div>
+              <h3 className="text-sm font-black text-slate-900 mb-6">Company</h3>
+              <ul className="space-y-4">
+                <li>
+                  <Link href="/about" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">About Us</Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Contact</Link>
+                </li>
+                <li>
+                  <Link href="/how-it-works" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">How it works</Link>
+                </li>
+              </ul>
+
+              <h3 className="text-sm font-black text-slate-900 mb-6 mt-8">Contact Info</h3>
+              <ul className="space-y-3">
+                <li>
+                  <a href="mailto:bookings@hoardspace.in" className="text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
+                    <Mail size={14} /> bookings@hoardspace.in
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+917655052057" className="text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
+                    <Phone size={14} /> 7655-052057
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Registration Details */}
+            <div>
+              <h3 className="text-sm font-black text-slate-900 mb-6">Registration</h3>
+              <div className="space-y-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                <p>CIN: U63120OD2025PTC051640</p>
+                <p>PAN: AAICH3418E</p>
+                <p>TAN: BBNH01998D</p>
+                <p>CKYC: 90003349208072</p>
+                <p>GSTIN: 21AAICH3418E1Z3</p>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+
+      {/* Bottom Bar */}
+      <div className="bg-slate-50 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs font-medium text-slate-500">
+            &copy; {currentYear} Hoardspace Bookings Private Limited.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {legal.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
     </footer>
   );
 }
