@@ -3,11 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, ChevronDown, List, Map as MapIcon, User, Tag, Camera } from "lucide-react";
+import { ChevronRight, ChevronDown, Search, User, Tag, Camera } from "lucide-react";
 
 export default function ExploreClient({ initialHoardings, initialCity = "" }: { initialHoardings: any[], initialCity?: string }) {
   const [hoardings, setHoardings] = useState(initialHoardings);
-  const [searchQuery, setSearchQuery] = useState(initialCity.toLowerCase());
+  const [searchQuery, setSearchQuery] = useState(initialCity);
   const [sortBy, setSortBy] = useState("default");
   
   // Dummy filtering state purely for UI mimicry
@@ -23,14 +23,38 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
     return { ...h, effectiveMinSpend: minSpend };
   });
 
+  const normalize = (value: string = "") =>
+    value
+      .toLowerCase()
+      .split(",")[0]
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const normalizedSearchQuery = normalize(searchQuery);
+
+  const availableCities = Array.from(
+    new Set(
+      processedHoardings
+        .map((h) => h?.location?.city)
+        .filter((city): city is string => Boolean(city && city.trim())),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "en-IN"));
+
   // Filter hoardings (mock client-side filtering)
   const filteredHoardings = processedHoardings.filter((h) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
+    if (!normalizedSearchQuery) return true;
+    const query = normalizedSearchQuery;
+    const city = normalize(h.location.city || "");
+    const state = (h.location.state || "").toLowerCase();
+    const name = (h.name || "").toLowerCase();
+    const area = (h.location.area || "").toLowerCase();
+    const address = (h.location.address || "").toLowerCase();
     return (
-      h.name.toLowerCase().includes(query) ||
-      h.location.city.toLowerCase().includes(query) ||
-      h.location.area.toLowerCase().includes(query)
+      city.includes(query) ||
+      state.includes(query) ||
+      name.includes(query) ||
+      area.includes(query) ||
+      address.includes(query)
     );
   });
 
@@ -70,17 +94,29 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                 <div className="space-y-3">
                   <div className="relative">
                     <span className="absolute -top-2 left-3 bg-white px-1 text-[10px] text-gray-400 uppercase font-bold tracking-wider">Type to search</span>
-                    <select
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      list="explore-city-suggestions"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full p-3 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none appearance-none cursor-pointer"
-                    >
-                      <option value="">All Cities, Pan India...</option>
-                      <option value="bhubaneswar">Bhubaneswar, Odisha</option>
-                      <option value="cuttack">Cuttack, Odisha</option>
-                      <option value="rourkela">Rourkela, Odisha</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                      placeholder="All Cities, Pan India..."
+                      className="w-full pl-10 pr-9 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none"
+                    />
+                    <datalist id="explore-city-suggestions">
+                      {availableCities.map((city) => (
+                        <option key={city} value={city} />
+                      ))}
+                    </datalist>
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -146,7 +182,7 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
           {/* Header Bar */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-6 border-b border-gray-100">
             <h1 className="text-3xl md:text-5xl font-sans font-black text-slate-900 tracking-tighter antialiased">
-              {searchQuery ? (
+              {normalizedSearchQuery ? (
                 <span className="capitalize">{searchQuery}</span>
               ) : (
                 <>Top <span className="text-[#2563eb]">Cities</span></>

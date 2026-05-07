@@ -71,7 +71,9 @@ export async function GET(req: Request) {
     }
 
     if (city) {
-      query['location.city'] = { $regex: new RegExp(city, 'i') };
+      const normalizedCity = city.split(",")[0].trim();
+      const escapedCity = normalizedCity.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      query["location.city"] = { $regex: new RegExp(escapedCity, "i") };
     }
 
     if (type) {
@@ -129,9 +131,9 @@ export async function POST(req: Request) {
       description: data.description,
       location: {
         address: data.address,
-        city: data.city,
+        city: data.city.trim(),
 
-        state: data.state,
+        state: data.state.trim(),
         zipCode: data.zipCode,
         ...((data.latitude && data.longitude) ? { coordinates: { lat: data.latitude, lng: data.longitude } } : {})
       },

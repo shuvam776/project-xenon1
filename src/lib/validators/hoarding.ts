@@ -1,4 +1,12 @@
 import { z } from "zod";
+import { INDIAN_CITIES } from "@/utils/cities";
+
+const normalizedIndianCities = new Set(
+  INDIAN_CITIES.map((item) => item.city.trim().toLowerCase()),
+);
+
+const isValidIndianCity = (city: string) =>
+  normalizedIndianCities.has(city.trim().toLowerCase());
 
 export const hoardingSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -6,7 +14,10 @@ export const hoardingSchema = z.object({
 
   // Location Details
   address: z.string().min(5, "Address must be at least 5 characters"),
-  city: z.string().min(2, "City is required"),
+  city: z
+    .string()
+    .min(2, "City is required")
+    .refine(isValidIndianCity, "Please select a valid Indian city"),
 
   state: z.string().min(2, "State is required"),
   zipCode: z.string().optional(),

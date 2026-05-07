@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "HoardSpace",
     description:
-      "Find and book premium hoarding spaces for your advertising campaigns",
+      "HoardSpace is an online platform that helps businesses and advertising agencies find and book hoardings easily. We connect hoarding owners with brands through one simple digital marketplace where users can search locations, compare prices, check availability, and book advertising spaces online.Our goal is to make outdoor advertising faster, easier, and more transparent for everyone.",
     images: ["/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"],
   },
 

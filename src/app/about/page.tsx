@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Building2, Target, Users, Award, User } from "lucide-react";
+import { Building2, Target, Users, Award } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -13,22 +13,29 @@ export default function AboutPage() {
               <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
                 About <span className="text-[#2563eb]">HoardSpace</span>
               </h1>
-              <p className="text-lg text-slate-500 leading-relaxed font-semibold">
-                Hoardspace is a digital marketplace transforming the way outdoor
-                advertising is discovered, planned, and booked. Search, compare, and
-                book premium locations across Indian cities through a
-                transparent, technology-driven platform.
-              </p>
-              
-              <div className="mt-12 flex flex-wrap gap-10">
-                  <div className="flex flex-col">
-                      <span className="text-4xl font-black text-slate-900">10k+</span>
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Premium Hoardings</span>
-                  </div>
-                  <div className="flex flex-col">
-                      <span className="text-4xl font-black text-slate-900">24/7</span>
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#2563eb] mt-2">Support Team</span>
-                  </div>
+              <div className="space-y-5 text-slate-600">
+                <p className="text-lg leading-relaxed font-semibold">
+                  HoardSpace is an online platform that helps businesses and advertising agencies find and book hoardings easily.
+                </p>
+                <p className="text-lg leading-relaxed font-semibold">
+                  We connect hoarding owners with brands through one simple digital marketplace where users can search locations, compare prices, check availability, and book advertising spaces online.
+                </p>
+                <p className="text-lg leading-relaxed font-semibold">
+                  Our goal is to make outdoor advertising faster, easier, and more transparent for everyone.
+                </p>
+
+                <div className="pt-2">
+                  <h2 className="text-2xl font-black text-slate-900 mb-4">
+                    Why Choose HoardSpace?
+                  </h2>
+                  <ul className="list-disc pl-6 space-y-2 text-base font-semibold text-slate-700">
+                    <li>Easy hoarding search and booking</li>
+                    <li>Compare locations and pricing</li>
+                    <li>Transparent information and availability</li>
+                    <li>Free listing for hoarding owners</li>
+                    <li>Better visibility for vendors and agencies</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

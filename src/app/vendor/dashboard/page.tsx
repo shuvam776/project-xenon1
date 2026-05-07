@@ -7,6 +7,7 @@ import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import "@fontsource/chiron-goround-tc";
 import MapLocationPicker from "@/components/MapLocationPicker";
 import { getLocationFromPincode, isValidIndianPincode } from "@/lib/googleMaps";
+import { INDIAN_CITIES } from "@/utils/cities";
 import {
   Building2,
   Ruler,
@@ -84,12 +85,6 @@ type BlockedRange = {
   type: "booking" | "manual";
   reason?: string;
 };
-
-const CITY_OPTIONS = [
-  "Bhubaneswar",
-  "Cuttack",
-  "Rourkela",
-];
 
 export default function VendorDashboard() {
   const router = useRouter();
@@ -487,6 +482,24 @@ export default function VendorDashboard() {
     }));
   };
 
+  const handleCityChange = (value: string) => {
+    const typedCity = value.trimStart();
+    const matchedCity = INDIAN_CITIES.find(
+      (item) => item.city.toLowerCase() === typedCity.trim().toLowerCase(),
+    );
+
+    setNewHoarding((prev: any) => ({
+      ...prev,
+      city: typedCity,
+      state: matchedCity ? matchedCity.state : prev.state,
+    }));
+  };
+
+  const isValidIndianCity = (city: string) =>
+    INDIAN_CITIES.some(
+      (item) => item.city.toLowerCase() === city.trim().toLowerCase(),
+    );
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
@@ -513,7 +526,6 @@ export default function VendorDashboard() {
 
   const handleCreateHoarding = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     try {
       // Filter out empty image URLs
       const cleanedHoarding = {
@@ -525,6 +537,13 @@ export default function VendorDashboard() {
         uniqueReach: Number(newHoarding.uniqueReach) || 0,
 
       };
+
+      if (!isValidIndianCity(cleanedHoarding.city || "")) {
+        alert("Please enter a valid Indian city from the suggestion list.");
+        return;
+      }
+
+      setLoading(true);
 
       if (!cleanedHoarding.pricePerMonth || cleanedHoarding.pricePerMonth < 1) {
         alert("Price per month is required.");
@@ -1083,24 +1102,22 @@ export default function VendorDashboard() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest px-1">City</label>
-                      <select
+                      <input
                         required
-                        className="w-full px-5 py-3.5 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 appearance-none shadow-sm cursor-pointer"
+                        type="text"
+                        list="indian-city-options"
+                        placeholder="Type any Indian city"
+                        className="w-full px-5 py-3.5 bg-white border border-blue-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
                         value={newHoarding.city}
-                        onChange={(e) => {
-                          const selectedCity = e.target.value;
-                          setNewHoarding({
-                            ...newHoarding,
-                            city: selectedCity,
-                            state: CITY_OPTIONS.includes(selectedCity) && !newHoarding.state.trim() ? "Odisha" : newHoarding.state,
-                          });
-                        }}
-                      >
-                        <option value="" disabled>Select city</option>
-                        {CITY_OPTIONS.map((city) => (
-                          <option key={city} value={city}>{city}, Odisha</option>
+                        onChange={(e) => handleCityChange(e.target.value)}
+                      />
+                      <datalist id="indian-city-options">
+                        {INDIAN_CITIES.map((cityObj) => (
+                          <option key={cityObj.display} value={cityObj.city}>
+                            {cityObj.display}
+                          </option>
                         ))}
-                      </select>
+                      </datalist>
                     </div>
                   </div>
 

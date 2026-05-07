@@ -6,6 +6,7 @@ import Link from "next/link";
 
 export default async function Home() {
   await connectDB();
+  const fallbackThumbnail = "/hoarding.jpg";
   
   // Fetch top 6 cities with the most approved hoardings
   const cityAgg = await Hoarding.aggregate([
@@ -16,22 +17,36 @@ export default async function Home() {
   ]);
 
   const colors = ["bg-blue-50", "bg-orange-50", "bg-indigo-50", "bg-emerald-50", "bg-rose-50", "bg-amber-50"];
-  
-  let featuredLocations = cityAgg.map((item, idx) => ({
-    city: item._id,
-    count: item.count,
-    color: colors[idx % colors.length]
-  }));
+
+  let featuredLocations = await Promise.all(
+    cityAgg.map(async (item, idx) => {
+      const sampleHoarding = await Hoarding.findOne({
+        status: "approved",
+        "location.city": item._id,
+        images: { $exists: true, $ne: [] },
+      })
+        .sort({ createdAt: -1 })
+        .select("images")
+        .lean();
+
+      return {
+        city: item._id,
+        count: item.count,
+        color: colors[idx % colors.length],
+        thumbnail: sampleHoarding?.images?.[0] || fallbackThumbnail,
+      };
+    }),
+  );
 
   // Fallback if no hoardings in DB yet
   if (featuredLocations.length === 0) {
     featuredLocations = [
-      { city: "Bhubaneswar", count: 0, color: "bg-blue-50" },
-      { city: "Mumbai", count: 0, color: "bg-orange-50" },
-      { city: "Cuttack", count: 0, color: "bg-indigo-50" },
-      { city: "Kolkata", count: 0, color: "bg-emerald-50" },
-      { city: "Delhi", count: 0, color: "bg-rose-50" },
-      { city: "Bangalore", count: 0, color: "bg-amber-50" },
+      { city: "Bhubaneswar", count: 0, color: "bg-blue-50", thumbnail: fallbackThumbnail },
+      { city: "Mumbai", count: 0, color: "bg-orange-50", thumbnail: fallbackThumbnail },
+      { city: "Cuttack", count: 0, color: "bg-indigo-50", thumbnail: fallbackThumbnail },
+      { city: "Kolkata", count: 0, color: "bg-emerald-50", thumbnail: fallbackThumbnail },
+      { city: "Delhi", count: 0, color: "bg-rose-50", thumbnail: fallbackThumbnail },
+      { city: "Bangalore", count: 0, color: "bg-amber-50", thumbnail: fallbackThumbnail },
     ];
   }
 
@@ -51,19 +66,19 @@ export default async function Home() {
           {/* Main Heading */}
           <div className="text-center w-full space-y-6 mb-12 flex flex-col items-center">
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 tracking-tighter leading-tight antialiased whitespace-nowrap w-full text-center">
-                Find the <span className="relative inline-block italic text-blue-600 mx-2 font-black">
-                  Perfect
-                  <svg className="absolute w-[110%] h-4 -bottom-2 -left-[5%] text-slate-900 opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 tracking-tighter leading-[1.15] md:leading-tight antialiased whitespace-normal break-words w-full max-w-[22ch] sm:max-w-none mx-auto text-center">
+                Book <span className="relative inline-block text-blue-600 mx-1">
+                  hoardings
+                  <svg className="absolute w-[110%] h-4 -bottom-2 -left-[5%] text-blue-600 opacity-90" viewBox="0 0 100 20" preserveAspectRatio="none">
                     <path d="M0 15 Q 50 0 100 15" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                   </svg>
-                </span> Hoarding Space
+                </span> online all across India
               </h1>
             </div>
             
             {/* Subheading */}
             <p className="text-center text-slate-700 font-medium text-lg md:text-xl max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
-              Discover premium hoarding spaces in prime locations to maximize your brand's visibility and impact.
+              An online marketplace for listing and booking hoardings online by connecting hoarding vendors and advertisers in one place
             </p>
           </div>
 
@@ -92,8 +107,13 @@ export default async function Home() {
                 className="group relative overflow-hidden rounded-3xl border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 cursor-pointer block"
               >
                 <div className={`h-48 ${loc.color} flex items-center justify-center overflow-hidden relative`}>
-                   <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                   <h3 className="text-3xl font-black text-slate-900/10 group-hover:text-slate-900/20 transition-colors uppercase tracking-widest scale-150 whitespace-nowrap px-4 text-center">
+                   <img
+                     src={loc.thumbnail}
+                     alt={`${loc.city} featured hoarding`}
+                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-slate-900/10 to-transparent"></div>
+                   <h3 className="relative text-3xl font-black text-white/80 group-hover:text-white transition-colors uppercase tracking-widest scale-110 whitespace-nowrap px-4 text-center">
                      {loc.city}
                    </h3>
                 </div>
