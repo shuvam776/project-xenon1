@@ -504,11 +504,6 @@ export default function VendorDashboard() {
     }));
   };
 
-  const isValidIndianCity = (city: string) =>
-    INDIAN_CITIES.some(
-      (item) => item.city.toLowerCase() === city.trim().toLowerCase(),
-    );
-
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
@@ -545,11 +540,6 @@ export default function VendorDashboard() {
         pricePerMonth: Number(newHoarding.pricePerMonth),
 
       };
-
-      if (!isValidIndianCity(cleanedHoarding.city || "")) {
-        alert("Please enter a valid Indian city from the suggestion list.");
-        return;
-      }
 
       setLoading(true);
 
