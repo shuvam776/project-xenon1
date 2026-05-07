@@ -162,8 +162,8 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] border border-white/60 p-4 md:p-6 relative">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 relative z-10">
+    <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] border border-white/60 p-4 md:p-6 relative z-100">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 relative z-100">
         {/* City Input with Autocomplete */}
         <div className="md:col-span-5 relative" ref={suggestionsRef}>
           <label className="block text-xs font-semibold text-slate-600 mb-2 pl-2 uppercase tracking-widest">
@@ -201,7 +201,7 @@ export default function SearchBar() {
 
           {/* Autocomplete Suggestions */}
           {showSuggestions && filteredCities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-48 overflow-y-auto overscroll-contain z-50 outline-none divide-y divide-slate-100">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-none shadow-2xl shadow-blue-900/10 max-h-48 overflow-y-auto overscroll-contain z-100 outline-none divide-y divide-slate-100">
               {filteredCities.slice(0, 10).map((cityObj, index) => (
                 <button
                   key={index}

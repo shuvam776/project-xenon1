@@ -110,5 +110,6 @@ export const HOARDING_TYPES = [
     "Gantry",
     "Bus Shelter",
     "Kiosk",
+    "Led hoarding/DOOH",
     "Other"
 ];

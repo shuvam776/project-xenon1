@@ -13,7 +13,7 @@ export default async function Home() {
     { $match: { status: 'approved' } },
     { $group: { _id: "$location.city", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 6 }
+    { $limit: 9 }
   ]);
 
   const colors = ["bg-blue-50", "bg-orange-50", "bg-indigo-50", "bg-emerald-50", "bg-rose-50", "bg-amber-50"];
@@ -47,6 +47,9 @@ export default async function Home() {
       { city: "Kolkata", count: 0, color: "bg-emerald-50", thumbnail: fallbackThumbnail },
       { city: "Delhi", count: 0, color: "bg-rose-50", thumbnail: fallbackThumbnail },
       { city: "Bangalore", count: 0, color: "bg-amber-50", thumbnail: fallbackThumbnail },
+      { city: "Pune", count: 0, color: "bg-blue-50", thumbnail: fallbackThumbnail },
+      { city: "Hyderabad", count: 0, color: "bg-orange-50", thumbnail: fallbackThumbnail },
+      { city: "Ahmedabad", count: 0, color: "bg-indigo-50", thumbnail: fallbackThumbnail },
     ];
   }
 
@@ -83,7 +86,7 @@ export default async function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto relative z-[100] animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
+          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto  z-[100] animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
             <SearchBar />
           </div>
         </div>
