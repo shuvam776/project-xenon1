@@ -3,15 +3,15 @@
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ChevronRight, 
-  MapPin, 
-  Tag, 
-  User, 
-  Maximize, 
-  Zap, 
-  Truck, 
-  Clock, 
+import {
+  ChevronRight,
+  MapPin,
+  Tag,
+  User,
+  Maximize,
+  Zap,
+  Truck,
+  Clock,
   Calendar,
   Share2,
   Heart,
@@ -133,7 +133,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
     if (!start || !end) return true;
     const s = getDayStamp(start);
     const e = getDayStamp(end);
-    
+
     if (s > e) {
       setDateError("Start date cannot be after end date");
       return false;
@@ -159,24 +159,17 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
     setBookRoleMessage("");
 
     if (type === "start") {
-      const start = new Date(value);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (start < today) {
-        setDateError("Start date cannot be in the past.");
-        return;
-      }
-
-      // If months is present, update end date
+      // Just update state on every change — validation runs on blur (see handleStartDateBlur)
+      // so keyboard entry (day → month → year) is never interrupted mid-way.
       const months = parseFloat(selectedDates.months);
-      if (months > 0) {
+      const start = new Date(value);
+      if (!isNaN(start.getTime()) && months > 0) {
         const end = new Date(start);
         end.setDate(end.getDate() + Math.ceil(months * 30));
-        setSelectedDates({ 
-          start: value, 
-          end: end.toISOString().split('T')[0], 
-          months: selectedDates.months 
+        setSelectedDates({
+          start: value,
+          end: end.toISOString().split('T')[0],
+          months: selectedDates.months
         });
       } else {
         setSelectedDates((prev) => ({ ...prev, start: value }));
@@ -184,7 +177,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
     } else if (type === "months") {
       const monthsStr = value;
       const monthsNum = parseFloat(value);
-      
+
       if (isNaN(monthsNum) || monthsNum <= 0) {
         setSelectedDates(prev => ({ ...prev, months: monthsStr }));
         return;
@@ -194,10 +187,10 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
         const start = new Date(selectedDates.start);
         const end = new Date(start);
         end.setDate(end.getDate() + Math.ceil(monthsNum * 30));
-        setSelectedDates({ 
-          ...selectedDates, 
-          months: monthsStr, 
-          end: end.toISOString().split('T')[0] 
+        setSelectedDates({
+          ...selectedDates,
+          months: monthsStr,
+          end: end.toISOString().split('T')[0]
         });
       } else {
         setSelectedDates(prev => ({ ...prev, months: monthsStr }));
@@ -218,7 +211,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
 
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       const minMonths = (hoarding as any).minimumBookingMonths || 1;
       const minDays = minMonths * 30;
 
@@ -229,6 +222,20 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
       }
 
       setSelectedDates((prev) => ({ ...prev, end: value, months: (diffDays / 30).toFixed(1) }));
+    }
+  };
+
+  // Validate the start date only after the user finishes typing (on blur)
+  const handleStartDateBlur = () => {
+    if (!selectedDates.start) return;
+    const [y, m, d] = selectedDates.start.split("-").map(Number);
+    const start = new Date(y, m - 1, d);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (isNaN(start.getTime())) {
+      setDateError("Please enter a valid start date.");
+    } else if (start < today) {
+      setDateError("Start date cannot be in the past.");
     }
   };
 
@@ -463,7 +470,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 className="object-cover transition-all duration-700 ease-in-out hover:scale-105"
                 priority
               />
-              
+
               {/* Navigation Arrows */}
               {hoarding.images && hoarding.images.length > 1 && (
                 <>
@@ -479,7 +486,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                   >
                     <ChevronRight size={24} />
                   </button>
-                  
+
                   {/* Image Count Badge */}
                   <div className="absolute bottom-6 right-6 px-4 py-2 bg-black/50 backdrop-blur-md text-white rounded-2xl text-xs font-black uppercase tracking-widest border border-white/20">
                     {activeImageIndex + 1} / {hoarding.images.length} Photos
@@ -536,17 +543,18 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 <div className="flex gap-4">
                   <div className="relative flex-1">
                     <span className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Start Date</span>
-                    <input 
+                    <input
                       type="date"
                       value={selectedDates.start}
                       onChange={(e) => handleDateChange("start", e.target.value)}
+                      onBlur={handleStartDateBlur}
                       className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all"
                     />
                     <Calendar className="absolute right-4 bottom-3 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
                   <div className="relative w-24">
                     <span className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Months</span>
-                    <input 
+                    <input
                       type="number"
                       min="1"
                       step="0.5"
@@ -558,7 +566,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 </div>
                 <div className="relative">
                   <span className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">End Date (Calculated)</span>
-                  <input 
+                  <input
                     type="date"
                     value={selectedDates.end}
                     onChange={(e) => handleDateChange("end", e.target.value)}
@@ -606,7 +614,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 </div>
               )}
 
-              <button 
+              <button
                 onClick={handleBookNow}
                 disabled={
                   bookingRequestLoading ||
@@ -640,7 +648,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                   </span>
                 </div>
               </div>
-              
+
               <div className="pt-2 space-y-3">
                 {wishlistRoleMessage && (
                   <div className="p-3 bg-amber-50 text-amber-700 text-xs rounded-lg font-medium">
@@ -674,7 +682,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 >
                   Enquire Now
                 </button>
-                <button 
+                <button
                   onClick={handleShare}
                   className="w-full flex items-center justify-center gap-2 text-gray-500 py-2 text-sm font-medium hover:text-[#2563eb] transition-colors"
                 >
@@ -727,7 +735,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
               )}
             </div>
           </div>
-          
+
           <div className="text-center">
             <Link href="/explore" className="text-blue-600 text-sm font-bold hover:underline uppercase tracking-wider">
               View Similar Media
