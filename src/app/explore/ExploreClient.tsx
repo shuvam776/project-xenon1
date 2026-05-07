@@ -267,7 +267,7 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                       <div className="flex items-center gap-3 text-slate-600">
                         <Tag className="w-4 h-4 text-[#2563eb]" />
                         <span className="text-sm font-medium">
-                          ₹ {hoarding.effectiveMinSpend ? hoarding.effectiveMinSpend.toLocaleString('en-IN') : '23,800'} Min Spend
+                          ₹ {hoarding.effectiveMinSpend ? hoarding.effectiveMinSpend.toLocaleString('en-IN') : '23,800'}/month
                         </span>
                       </div>
                     </div>

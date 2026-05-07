@@ -636,7 +636,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 <div className="text-gray-900 font-black tracking-tight flex flex-col items-end">
                   <span>₹ {Number(approxMonthlyCost).toLocaleString()}</span>
                   <span className="text-[10px] text-gray-400 font-bold uppercase mt-1">
-                    Includes GST 2.5% <span className="text-red-500">+ (18% on 2.5%)</span>
+                    Includes GST 2.5% <span className="text-red-500">+ Payment Gateway Charges (18% on 2.5%)</span>
                   </span>
                 </div>
               </div>

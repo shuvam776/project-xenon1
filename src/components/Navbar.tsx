@@ -78,23 +78,9 @@ export default function Navbar() {
                       Dashboard
                     </Link>
                     
-                    {/* Explore Superbutton */}
-                    {user.role === "buyer" ? (
-                      <div className="relative group h-full flex items-center">
-                        <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
-                          Explore
-                        </Link>
-                        <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-xl rounded-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0 z-[60]">
-                          <Link href="/buyer/dashboard?tab=wishlist" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-                            Wishlist
-                          </Link>
-                        </div>
-                      </div>
-                    ) : (
-                      <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
-                        Explore
-                      </Link>
-                    )}
+                    <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
+                      Explore
+                    </Link>
 
                     {/* More Superbutton */}
                     <div className="relative group h-full flex items-center">
@@ -149,6 +135,17 @@ export default function Navbar() {
                           <PlusCircle size={16} className="shrink-0" />
                           <span className="text-[10px] uppercase tracking-[0.2em] font-black">
                             Add Hoarding
+                          </span>
+                        </Link>
+                      )}
+                      {user.role === "buyer" && (
+                        <Link
+                          href="/buyer/dashboard?tab=wishlist"
+                          className="group inline-flex items-center gap-2 rounded-[2rem] py-2 px-5 bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-200 transition-all cursor-pointer duration-300 transform active:scale-95"
+                        >
+                          <ShoppingCart size={16} className="shrink-0" />
+                          <span className="text-[10px] uppercase tracking-[0.2em] font-black">
+                            Wishlist
                           </span>
                         </Link>
                       )}
