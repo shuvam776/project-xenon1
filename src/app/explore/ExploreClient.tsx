@@ -152,8 +152,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
             </div>
 
             {/* LIT/NONLIT Filter */}
-            <div className="mb-6">
-              <button 
+            {/* <div className="mb-6">
+             <button 
                 onClick={() => setLitOpen(!litOpen)}
                 className="flex items-center justify-between w-full text-left font-bold text-slate-700 uppercase tracking-widest text-xs mb-4"
               >
@@ -173,7 +173,7 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                   </label>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </aside>
 
@@ -256,6 +256,12 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
 
                     <div className="mt-auto space-y-2 pt-4 border-t border-gray-50">
                       <div className="flex items-center gap-3 text-slate-600">
+                        <Tag className="w-4 h-4 text-[#2563eb]" />
+                        <span className="text-sm font-medium">
+                          ₹ {hoarding.effectiveMinSpend ? hoarding.effectiveMinSpend.toLocaleString('en-IN') : '23,800'}/month
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-slate-600">
                         <User className="w-4 h-4 text-[#2563eb]" />
                         <span className="text-sm font-medium">
                           {typeof hoarding.uniqueReach === "number" &&
@@ -264,12 +270,7 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                               : "Reach / Week not added yet"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <Tag className="w-4 h-4 text-[#2563eb]" />
-                        <span className="text-sm font-medium">
-                          ₹ {hoarding.effectiveMinSpend ? hoarding.effectiveMinSpend.toLocaleString('en-IN') : '23,800'}/month
-                        </span>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
