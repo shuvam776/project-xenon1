@@ -34,17 +34,17 @@ export function calculateBuyerMonthlyPrice(
   const base = Number(basePricePerMonth) || 0;
   const hoardspaceCommission =
     (base * settings.hoardspaceCommissionPercent) / 100;
-  const razorpayCharges = (base * settings.razorpayPercent) / 100;
   const gst = (base * settings.gstPercent) / 100;
+  const paymentGatewayOnGst = gst * 0.18;
   const total = Math.ceil(
-    base + hoardspaceCommission + razorpayCharges + gst,
+    base + hoardspaceCommission + gst + paymentGatewayOnGst,
   );
 
   return {
     basePricePerMonth: base,
     hoardspaceCommission: Math.ceil(hoardspaceCommission),
-    razorpayCharges: Math.ceil(razorpayCharges),
     gst: Math.ceil(gst),
+    paymentGatewayOnGst: Math.ceil(paymentGatewayOnGst),
     totalPricePerMonth: total,
   };
 }
@@ -57,18 +57,17 @@ export function calculateCampaignPricing(
   const vendorBaseAmount = Math.ceil(((Number(basePricePerMonth) || 0) / 30) * diffDays);
   const hoardspaceCommission =
     (vendorBaseAmount * settings.hoardspaceCommissionPercent) / 100;
-  const gatewayCharges =
-    (vendorBaseAmount * settings.razorpayPercent) / 100;
   const gst = (vendorBaseAmount * settings.gstPercent) / 100;
+  const paymentGatewayOnGst = gst * 0.18;
   const totalAmount = Math.ceil(
-    vendorBaseAmount + hoardspaceCommission + gatewayCharges + gst,
+    vendorBaseAmount + hoardspaceCommission + gst + paymentGatewayOnGst,
   );
 
   return {
     vendorBaseAmount,
     hoardspaceCommission: Math.ceil(hoardspaceCommission),
-    gatewayCharges: Math.ceil(gatewayCharges),
     gst: Math.ceil(gst),
+    paymentGatewayOnGst: Math.ceil(paymentGatewayOnGst),
     totalAmount,
     // Platform revenue is only the HoardSpace commission portion.
     platformFee: Math.ceil(hoardspaceCommission),

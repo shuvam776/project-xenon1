@@ -53,7 +53,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gray-50 font-outfit">
       {/* Modern Left-Aligned Hero Section */}
-      <section id="home" className="relative w-full min-h-[70vh] flex flex-col pt-20 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat overflow-hidden" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
+      <section id="home" className="relative z-30 w-full min-h-[70vh] flex flex-col pt-20 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
         {/* Subtle Decorative Gradients */}
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
         <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
@@ -83,14 +83,14 @@ export default async function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto relative z-10 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
+          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto relative z-[100] animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
             <SearchBar />
           </div>
         </div>
       </section>
 
       {/* Featured Locations Section */}
-      <section className="py-8 md:py-12 bg-white">
+      <section className="py-8 md:py-12 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center mb-10 text-center">
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter leading-tight antialiased mb-4">

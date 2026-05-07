@@ -62,15 +62,19 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
   const diffDays = start && end ? Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) : 30;
   const durationMonths = Math.max(1, diffDays / 30);
 
-  const approxMonthlyCost =
-    hoarding.pricingBreakdown?.totalPricePerMonth ||
-    Math.ceil(
-      (basePricePerMonth +
-        (basePricePerMonth * commissionPercent) / 100 +
-        (basePricePerMonth * razorpayPercent) / 100 +
-        (basePricePerMonth * gstPercent) / 100 +
-        ((basePricePerMonth * gstPercent) / 100) * 0.18) * durationMonths,
-    );
+  // Formula: (base + commission + 2.5% GST + 18% payment gateway on GST) × months
+  const gstAmount = (basePricePerMonth * gstPercent) / 100;
+  const paymentGatewayOnGst = gstAmount * 0.18;
+  const perMonthTotal =
+    basePricePerMonth +
+    (basePricePerMonth * commissionPercent) / 100 +
+    gstAmount +
+    paymentGatewayOnGst;
+
+  const approxTotalCost =
+    hoarding.pricingBreakdown?.totalPricePerMonth
+      ? Math.ceil(hoarding.pricingBreakdown.totalPricePerMonth * durationMonths)
+      : Math.ceil(perMonthTotal * durationMonths);
   const isBuyerKycVerified =
     currentUserKycStatus === "approved" || currentUserKycStatus === "verified";
 
@@ -642,7 +646,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                   </span>
                 </div>
                 <div className="text-gray-900 font-black tracking-tight flex flex-col items-end">
-                  <span>₹ {Number(approxMonthlyCost).toLocaleString()}</span>
+                  <span>₹ {approxTotalCost.toLocaleString()}</span>
                   <span className="text-[10px] text-gray-400 font-bold uppercase mt-1">
                     Includes GST 2.5% <span className="text-red-500">+ Payment Gateway Charges (18% on 2.5%)</span>
                   </span>

@@ -195,29 +195,25 @@ export default function BookingPage() {
 
     const basePricePerMonth = hoarding.basePricePerMonth || hoarding.pricePerMonth;
     const commissionPercent = hoarding.pricingConfig?.hoardspaceCommissionPercent || 0;
-    const gatewayPercent = hoarding.pricingConfig?.razorpayPercent || 2.5;
     const gstPercent = hoarding.pricingConfig?.gstPercent || 2.5;
 
-    const basePrice = basePricePerMonth * months;
-    const commission = basePrice * (commissionPercent / 100);
+    const basePrice = Math.ceil(basePricePerMonth * months);
+    const commission = Math.ceil(basePrice * (commissionPercent / 100));
     const subtotal = basePrice + commission;
-    const gatewayCharges = subtotal * (gatewayPercent / 100);
-    const gst = subtotal * (gstPercent / 100);
-    const gstTax = gst * 0.18;
+    const gst = Math.ceil(subtotal * (gstPercent / 100));
+    const paymentGatewayOnGst = Math.ceil(gst * 0.18);
 
-    const total = subtotal + gatewayCharges + gst + gstTax;
+    const total = Math.ceil(subtotal + gst + paymentGatewayOnGst);
 
     return {
       base: basePrice,
       durationMonths: months,
       commission,
       commissionPercent,
-      gateway: gatewayCharges,
-      gatewayPercent,
       gst,
       gstPercent,
-      gstTax,
-      total: Math.round(total),
+      paymentGatewayOnGst,
+      total,
     };
   };
 
@@ -646,7 +642,7 @@ export default function BookingPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">
-                      Base Cost / Month
+                      Base Cost ({pricing.durationMonths.toFixed(1)} Months)
                     </span>
                     <span className="text-gray-900 font-black tracking-tight">
                       ₹{pricing.base.toLocaleString()}
@@ -665,27 +661,26 @@ export default function BookingPage() {
                       Subtotal
                     </span>
                     <span className="text-gray-900 font-black tracking-tight border-b-2 border-gray-200">
-                      ₹
-                      {(pricing.base + pricing.commission).toLocaleString()}
+                      ₹{(pricing.base + pricing.commission).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm pt-2">
                     <span className="text-gray-500 font-medium">
-                      Razorpay Charges ({pricing.gatewayPercent}%)
+                      GST ({pricing.gstPercent}%)
                     </span>
                     <span className="text-gray-900 font-black tracking-tight">
-                      ₹{pricing.gateway.toLocaleString()}
+                      ₹{pricing.gst.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500 font-medium">
-                      GST ({pricing.gstPercent}%)
+                      Payment Gateway
                       <span className="text-red-500 text-[10px] font-bold ml-1">
-                        + (18% on {pricing.gstPercent}%)
+                        (18% on {pricing.gstPercent}% GST)
                       </span>
                     </span>
                     <span className="text-gray-900 font-black tracking-tight">
-                      ₹{(pricing.gst + (pricing as any).gstTax).toLocaleString()}
+                      ₹{pricing.paymentGatewayOnGst.toLocaleString()}
                     </span>
                   </div>
                   <div className="pt-4 mt-4 border-t border-gray-200">
