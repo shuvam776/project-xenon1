@@ -261,7 +261,7 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                           {typeof hoarding.uniqueReach === "number" &&
                           hoarding.uniqueReach > 0
                             ? `${hoarding.uniqueReach.toLocaleString("en-IN")} Unique Reach`
-                              : "N/A"}
+                              : "Reach / Week not added yet"}
                         </span>
                       </div>
                       <div className="flex items-center gap-3 text-slate-600">

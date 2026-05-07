@@ -145,9 +145,6 @@ export default function VendorDashboard() {
     pricePerMonth: 0,
     minimumBookingMonths: 1,
 
-
-    uniqueReach: 0,
-
     images: [""]
   });
   const [pincodeLoading, setPincodeLoading] = useState(false);
@@ -546,7 +543,6 @@ export default function VendorDashboard() {
         width: Number(newHoarding.width),
         height: Number(newHoarding.height),
         pricePerMonth: Number(newHoarding.pricePerMonth),
-        uniqueReach: Number(newHoarding.uniqueReach) || 0,
 
       };
 
@@ -598,9 +594,6 @@ export default function VendorDashboard() {
           type: "Hoarding",
           lightingType: "Lit",
           pricePerMonth: 0,
-
-
-          uniqueReach: 0,
 
           images: [""]
         });
@@ -1195,17 +1188,7 @@ export default function VendorDashboard() {
 
                 {/* Additional Insight & Media */}
                 <div className="bg-gray-50 p-6 rounded-[2.5rem] border border-gray-100 space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Reach / Week</label>
-                      <input
-                        type="number"
-                        placeholder="Optional"
-                        className="w-full px-5 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none font-bold text-gray-700 shadow-sm"
-                        value={newHoarding.uniqueReach}
-                        onChange={(e) => setNewHoarding({...newHoarding, uniqueReach: e.target.value})}
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Min Period (Mo)</label>
                       <select 

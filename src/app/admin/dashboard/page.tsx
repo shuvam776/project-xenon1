@@ -80,12 +80,13 @@ interface Hoarding {
     city: string;
   };
   pricePerMonth: number;
+  uniqueReach?: number;
   status: string;
   owner: {
     _id: string;
     name: string;
     email: string;
-  };
+  } | null;
   createdAt: string;
 }
 
@@ -149,6 +150,7 @@ export default function AdminDashboard() {
 
   // Action states
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [reachDrafts, setReachDrafts] = useState<Record<string, string>>({});
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     type: "user" | "hoarding" | null;
@@ -594,6 +596,36 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       alert("Failed to update hoarding status");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleUpdateHoardingReach = async (hoardingId: string) => {
+    const draft = (reachDrafts[hoardingId] ?? "").trim();
+    const parsedReach = draft === "" ? 0 : Number(draft);
+
+    if (!Number.isFinite(parsedReach) || parsedReach < 0) {
+      alert("Reach / Week must be a valid non-negative number.");
+      return;
+    }
+
+    setActionLoading(hoardingId);
+    try {
+      const res = await fetchWithAuth(`/api/admin/hoardings/${hoardingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uniqueReach: Math.round(parsedReach) }),
+      });
+
+      if (res.ok) {
+        await fetchHoardings();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to update reach");
+      }
+    } catch (error) {
+      alert("Failed to update reach");
     } finally {
       setActionLoading(null);
     }
@@ -1073,6 +1105,9 @@ export default function AdminDashboard() {
                           Price
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Reach / Week
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                           Status
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
@@ -1096,10 +1131,10 @@ export default function AdminDashboard() {
                           <td className="px-4 py-4">
                             <div>
                               <p className="font-medium text-gray-900">
-                                {hoarding.owner.name}
+                                {hoarding.owner?.name || "Unknown Owner"}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {hoarding.owner.email}
+                                {hoarding.owner?.email || "Email unavailable"}
                               </p>
                             </div>
                           </td>
@@ -1107,6 +1142,38 @@ export default function AdminDashboard() {
                             <p className="font-semibold text-gray-900">
                               ₹{hoarding.pricePerMonth.toLocaleString()}/mo
                             </p>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min={0}
+                                value={
+                                  reachDrafts[hoarding._id] ??
+                                  (typeof hoarding.uniqueReach === "number" &&
+                                  hoarding.uniqueReach > 0
+                                    ? String(hoarding.uniqueReach)
+                                    : "")
+                                }
+                                onChange={(e) =>
+                                  setReachDrafts((prev) => ({
+                                    ...prev,
+                                    [hoarding._id]: e.target.value,
+                                  }))
+                                }
+                                placeholder="Not set"
+                                className="w-28 px-2 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-[#2563eb] outline-none"
+                              />
+                              <button
+                                onClick={() =>
+                                  handleUpdateHoardingReach(hoarding._id)
+                                }
+                                disabled={actionLoading === hoarding._id}
+                                className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-sm font-medium disabled:opacity-50"
+                              >
+                                Save
+                              </button>
+                            </div>
                           </td>
                           <td className="px-4 py-4">
                             <span

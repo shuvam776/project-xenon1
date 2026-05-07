@@ -33,7 +33,16 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
         const updateData: any = {};
         if (status) updateData.status = status;
-        if (uniqueReach !== undefined) updateData.uniqueReach = uniqueReach;
+        if (uniqueReach !== undefined) {
+            const parsedUniqueReach = Number(uniqueReach);
+            if (!Number.isFinite(parsedUniqueReach) || parsedUniqueReach < 0) {
+                return NextResponse.json(
+                    { error: "uniqueReach must be a non-negative number" },
+                    { status: 400 }
+                );
+            }
+            updateData.uniqueReach = Math.round(parsedUniqueReach);
+        }
 
         const hoarding = await Hoarding.findByIdAndUpdate(id, updateData, { new: true })
             .populate('owner', 'name email');
