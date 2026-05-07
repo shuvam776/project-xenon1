@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { User, Menu, X, LayoutDashboard, ShoppingCart } from "lucide-react";
+import { User, Menu, X, ShoppingCart, PlusCircle } from "lucide-react";
 import AuthModal from "./AuthModal";
 import { checkAuth, logout } from "@/lib/fetchWithAuth";
 
@@ -79,16 +79,22 @@ export default function Navbar() {
                     </Link>
                     
                     {/* Explore Superbutton */}
-                    <div className="relative group h-full flex items-center">
+                    {user.role === "buyer" ? (
+                      <div className="relative group h-full flex items-center">
+                        <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
+                          Explore
+                        </Link>
+                        <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-xl rounded-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0 z-[60]">
+                          <Link href="/buyer/dashboard?tab=wishlist" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                            Wishlist
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
                       <Link href="/explore" className="flex items-center text-xs uppercase tracking-widest font-black text-slate-700 hover:text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-full transition-all whitespace-nowrap">
                         Explore
                       </Link>
-                      <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-xl rounded-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0 z-[60]">
-                        <Link href="/buyer/dashboard?tab=wishlist" className="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
-                          Wishlist
-                        </Link>
-                      </div>
-                    </div>
+                    )}
 
                     {/* More Superbutton */}
                     <div className="relative group h-full flex items-center">
@@ -135,6 +141,17 @@ export default function Navbar() {
                 <div className="hidden lg:flex items-center gap-2 h-full">
                   {user ? (
                     <div className="flex items-center gap-4 h-full">
+                      {user.role === "vendor" && (
+                        <Link
+                          href="/vendor/dashboard?openAdd=1"
+                          className="group inline-flex items-center gap-2 rounded-[2rem] py-2 px-5 bg-[#2563eb] text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all cursor-pointer duration-300 transform active:scale-95"
+                        >
+                          <PlusCircle size={16} className="shrink-0" />
+                          <span className="text-[10px] uppercase tracking-[0.2em] font-black">
+                            Add Hoarding
+                          </span>
+                        </Link>
+                      )}
                       <button 
                         onClick={handleLogout} 
                         className="flex items-center gap-2 rounded-[2rem] py-2 px-6 bg-slate-800 text-white hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-100 transition-all cursor-pointer duration-300 transform active:scale-95"
@@ -219,6 +236,16 @@ export default function Navbar() {
                     >
                       Explore
                     </Link>
+                    {user.role === "vendor" && (
+                      <Link
+                        href="/vendor/dashboard?openAdd=1"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-700 hover:bg-blue-100 rounded-lg transition-all w-full text-left"
+                      >
+                        <PlusCircle size={16} className="text-blue-600 shrink-0" />
+                        Add Hoarding
+                      </Link>
+                    )}
                    </>
                 ) : (
                   <Link 
