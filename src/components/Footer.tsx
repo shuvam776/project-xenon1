@@ -63,9 +63,9 @@ export default function Footer() {
               <Image
                 src={sponsor.src}
                 alt={sponsor.name}
-                width={120}
-                height={60}
-                className="object-contain max-h-12 w-auto mix-blend-multiply"
+                width={160}
+                height={80}
+                className="object-contain max-h-16 w-auto mix-blend-multiply"
               />
             </a>
           ))}
