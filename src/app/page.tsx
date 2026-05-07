@@ -13,8 +13,8 @@ export default function Home() {
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
         <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
 
-        {/* Artistic Blended Hoarding Imagery */}
-        
+        {/* Artistic Blended Billboard Imagery */}
+        {/*body */}
         
 
         <div className="max-w-7xl mx-auto w-full pt-4 pb-16 relative z-20 flex flex-col items-center justify-center">
