@@ -528,15 +528,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       const result: AuthApiResponse = await res.json();
       if (!res.ok) throw new Error(result.error || "KYC submission failed");
 
-      moveToPhoneVerification(
-        result.phone || data.phone,
-        result.resendAvailableIn ?? 60,
-        result.otpSent === false
-          ? result.message ||
-              "KYC was saved, but we could not send the phone verification code yet."
-          : "",
-        result.otpSent === false ? "" : result.message || "",
+      setNotice(
+        result.message ||
+          "KYC submitted successfully. Phone verification will be completed by admin during review.",
       );
+      handleClose();
+      window.location.href = "/profile";
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "KYC submission failed");
     } finally {
@@ -1296,7 +1293,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mobile Number
+                    Phone Number
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />

@@ -2,7 +2,6 @@
 
 import {
   ChangeEvent,
-  FormEvent,
   useCallback,
   useEffect,
   useRef,
@@ -67,17 +66,6 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
-  const [otpCode, setOtpCode] = useState("");
-  const [phoneStatus, setPhoneStatus] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpRecipient, setOtpRecipient] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
-  const [sendingPhoneOtp, setSendingPhoneOtp] = useState(false);
-  const [verifyingPhoneOtp, setVerifyingPhoneOtp] = useState(false);
-  const PHONE_OTP_COOLDOWN_SECONDS = 60;
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoStatus, setPhotoStatus] = useState<{
@@ -159,109 +147,6 @@ export default function ProfilePage() {
     window.location.href = "/";
   };
 
-  const handleSendPhoneOtp = async (event?: FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
-    setPhoneStatus(null);
-
-    const trimmedPhone = phoneInput.trim();
-    if (!trimmedPhone) {
-      setPhoneStatus({
-        type: "error",
-        message: "Please enter a valid phone number.",
-      });
-      return;
-    }
-
-    setSendingPhoneOtp(true);
-    try {
-      const res = await fetchWithAuth("/api/auth/phone/send-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ phone: trimmedPhone }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setPhoneStatus({
-          type: "error",
-          message: data.error || data.message || "Could not send OTP.",
-        });
-        if (data.resendAvailableIn) {
-          setResendCooldown(data.resendAvailableIn);
-        }
-        return;
-      }
-
-      setOtpSent(true);
-      setOtpRecipient(data.phone || trimmedPhone);
-      setResendCooldown(
-        data.resendAvailableIn ?? PHONE_OTP_COOLDOWN_SECONDS,
-      );
-      setPhoneStatus({
-        type: "success",
-        message: data.message || "OTP sent successfully.",
-      });
-    } catch (err: unknown) {
-      setPhoneStatus({
-        type: "error",
-        message: getErrorMessage(err, "Failed to send OTP. Please try again."),
-      });
-    } finally {
-      setSendingPhoneOtp(false);
-    }
-  };
-
-  const handleVerifyPhoneOtp = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!otpCode.trim()) {
-      setPhoneStatus({
-        type: "error",
-        message: "Enter the 6-digit verification code.",
-      });
-      return;
-    }
-
-    setVerifyingPhoneOtp(true);
-    setPhoneStatus(null);
-    try {
-      const res = await fetchWithAuth("/api/auth/verify-phone", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: phoneInput.trim(),
-          otp: otpCode.trim(),
-          context: "profile",
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Verification failed");
-      }
-
-      setPhoneStatus({
-        type: "success",
-        message: data.message || "Phone verified successfully.",
-      });
-      setOtpSent(false);
-      setOtpCode("");
-      setOtpRecipient("");
-      setResendCooldown(0);
-      await loadUser();
-    } catch (err: unknown) {
-      setPhoneStatus({
-        type: "error",
-        message: getErrorMessage(err, "Invalid verification code."),
-      });
-    } finally {
-      setVerifyingPhoneOtp(false);
-    }
-  };
-
   const handlePhotoSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -315,8 +200,9 @@ export default function ProfilePage() {
   const handleKYCSubmit = async (data: ProfileKYCInput) => {
     setError("");
     setSuccess("");
-    if (!user?.isPhoneVerified) {
-      setError("Phone number must be verified before submitting KYC details.");
+    const trimmedPhone = phoneInput.trim();
+    if (!trimmedPhone) {
+      setError("Phone number is required to submit KYC details.");
       return;
     }
 
@@ -324,7 +210,7 @@ export default function ProfilePage() {
     try {
       const payload = {
         ...data,
-        phone: user.phone,
+        phone: trimmedPhone,
       };
       const res = await fetchWithAuth("/api/auth/kyc", {
         method: "POST",
@@ -344,16 +230,6 @@ export default function ProfilePage() {
       setKycSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (resendCooldown <= 0) return;
-
-    const timer = window.setTimeout(() => {
-      setResendCooldown((current) => Math.max(0, current - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timer);
-  }, [resendCooldown]);
 
   if (loading) {
     return (
@@ -558,52 +434,19 @@ export default function ProfilePage() {
                       <div className="bg-blue-50 p-2 rounded-xl text-blue-600">
                         <Phone size={24} />
                       </div>
-                      <h3 className="font-black text-gray-900 italic underline tracking-tight">Verify Mobile</h3>
+                      <h3 className="font-black text-gray-900 italic underline tracking-tight">Add phone number</h3>
                     </div>
 
-                    <form onSubmit={handleSendPhoneOtp} className="space-y-4">
-                      <input
-                        type="tel"
-                        value={phoneInput}
-                        onChange={(e) => setPhoneInput(e.target.value)}
-                        className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm transition-all"
-                        placeholder="+91 Mobile Number"
-                      />
-                      <button
-                        type="submit"
-                        disabled={sendingPhoneOtp || !phoneInput.trim() || resendCooldown > 0}
-                        className="w-full bg-blue-600 text-white rounded-2xl py-4 font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-100 hover:scale-[1.02] transition-transform disabled:opacity-50"
-                      >
-                        {sendingPhoneOtp ? "Sending..." : otpSent ? "Resend OTP" : "Send Verification OTP"}
-                      </button>
-                    </form>
-
-                    {otpSent && (
-                      <form onSubmit={handleVerifyPhoneOtp} className="space-y-4 mt-6 animate-in slide-in-from-bottom-4">
-                        <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                          <p className="text-[10px] font-black text-blue-500 uppercase mb-2">Enter 6-Digit Code</p>
-                          <input
-                            type="text"
-                            maxLength={6}
-                            value={otpCode}
-                            onChange={(e) => setOtpCode(e.target.value)}
-                            className="w-full text-center text-3xl font-black tracking-[0.4em] bg-transparent outline-none text-blue-600"
-                          />
-                        </div>
-                        <button
-                          type="submit"
-                          disabled={verifyingPhoneOtp || !otpCode.trim()}
-                          className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-black uppercase text-xs tracking-widest shadow-lg shadow-indigo-100"
-                        >
-                          {verifyingPhoneOtp ? "Checking..." : "Confirm OTP"}
-                        </button>
-                      </form>
-                    )}
-                    {phoneStatus && (
-                      <p className={`text-[10px] font-bold text-center ${phoneStatus.type === "success" ? "text-green-500" : "text-red-500"}`}>
-                        {phoneStatus.message}
-                      </p>
-                    )}
+                    <input
+                      type="tel"
+                      value={phoneInput}
+                      onChange={(e) => setPhoneInput(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:ring-4 focus:ring-blue-500/10 outline-none font-bold text-sm transition-all"
+                      placeholder="+91 Phone Number"
+                    />
+                    <p className="text-[10px] font-medium text-gray-500">
+                      Phone verification is temporarily handled by admin during KYC review.
+                    </p>
                   </div>
                 </div>
               )}

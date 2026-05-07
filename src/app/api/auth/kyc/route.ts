@@ -27,18 +27,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const phone = currentUser.phone ? normalizePhone(currentUser.phone) : "";
+    const submittedPhone =
+      typeof body.phone === "string" && body.phone.trim()
+        ? normalizePhone(body.phone)
+        : "";
+    const existingPhone = currentUser.phone ? normalizePhone(currentUser.phone) : "";
+    const phone = submittedPhone || existingPhone;
 
     if (!phone) {
       return NextResponse.json(
-        { error: "A phone number must be saved on this account before KYC can be submitted." },
-        { status: 400 },
-      );
-    }
-
-    if (!currentUser.isPhoneVerified) {
-      return NextResponse.json(
-        { error: "Phone number must be verified before submitting KYC details." },
+        { error: "Phone number is required before submitting KYC details." },
         { status: 400 },
       );
     }
@@ -54,12 +52,13 @@ export async function POST(req: Request) {
     const { address, companyName, gstin, pan, aadhaar, documents } = result.data;
 
     // Check if phone already exists for another user
-    const existingPhone = await User.findOne({ phone, _id: { $ne: payload.userId } });
-    if (existingPhone) {
+    const duplicatePhoneUser = await User.findOne({ phone, _id: { $ne: payload.userId } });
+    if (duplicatePhoneUser) {
       return NextResponse.json({ error: "Phone number already in use" }, { status: 400 });
     }
 
     const updatedUser = await User.findByIdAndUpdate(payload.userId, {
+      phone,
       kycDetails: {
         phone,
         address,
