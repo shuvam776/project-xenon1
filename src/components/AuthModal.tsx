@@ -8,12 +8,10 @@ import {
   ArrowLeft,
   X,
   Mail,
-  Phone,
   User as UserIcon,
   Building2,
   Lock,
   ShieldCheck,
-  MapPin,
 } from "lucide-react";
 import {
   signupSchema,
@@ -1293,109 +1291,89 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {step === "kyc" && (
               <form
                 onSubmit={kycForm.handleSubmit(handleKYCSubmit)}
-                className="space-y-4 overflow-y-auto max-h-[350px] pr-2 custom-scrollbar"
+                className="space-y-4 overflow-y-auto max-h-[420px] pr-2 custom-scrollbar"
               >
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      {...kycForm.register("phone")}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none text-black"
-                      placeholder="+91 98765 43210"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <input
+                    {...kycForm.register("phone")}
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs"
+                    placeholder="+91 Phone Number *"
+                  />
                   {kycForm.formState.errors.phone && (
-                    <p className="text-xs text-red-500 mt-1">
+                    <p className="text-[9px] text-red-500 font-bold">
                       {kycForm.formState.errors.phone.message}
                     </p>
                   )}
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Company Address
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <textarea
-                      rows={2}
-                      {...kycForm.register("address")}
-                      className="w-full pl-10 pr-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] focus:border-transparent outline-none text-black"
-                      placeholder="Registered Address"
-                    />
-                  </div>
-                </div>
+                  <input
+                    {...kycForm.register("companyName")}
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs"
+                    placeholder="Company Name (Optional)"
+                  />
 
-                {/* Optional fields based on Schema */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      GSTIN{" "}
-                      <span className="text-gray-400 font-normal">
-                        (Optional)
-                      </span>
-                    </label>
-                    <input
-                      {...kycForm.register("gstin")}
-                      onInput={(e) => e.currentTarget.value = e.currentTarget.value.toUpperCase()}
-                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none text-black uppercase"
-                      placeholder="GST Number"
-                    />
-                    {kycForm.formState.errors.gstin && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {kycForm.formState.errors.gstin.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      PAN <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...kycForm.register("pan")}
-                      onInput={(e) => e.currentTarget.value = e.currentTarget.value.toUpperCase()}
-                      className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none text-black uppercase"
-                      placeholder="PAN Number (e.g. ABCDE1234F)"
-                    />
-                    {kycForm.formState.errors.pan && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {kycForm.formState.errors.pan.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                  <input
+                    {...kycForm.register("gstin")}
+                    onInput={(e) => (e.currentTarget.value = e.currentTarget.value.toUpperCase())}
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs uppercase"
+                    placeholder="GSTIN (Optional)"
+                  />
+                  {kycForm.formState.errors.gstin && (
+                    <p className="text-[9px] text-red-500 font-bold">
+                      {kycForm.formState.errors.gstin.message}
+                    </p>
+                  )}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Aadhaar Number <span className="text-red-500">*</span>
-                  </label>
+                  <input
+                    {...kycForm.register("pan")}
+                    onInput={(e) => (e.currentTarget.value = e.currentTarget.value.toUpperCase())}
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs uppercase"
+                    placeholder="PAN Number *"
+                  />
+                  {kycForm.formState.errors.pan && (
+                    <p className="text-[9px] text-red-500 font-bold">
+                      {kycForm.formState.errors.pan.message}
+                    </p>
+                  )}
+
                   <input
                     {...kycForm.register("aadhaar")}
-                    className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-[#2563eb] outline-none text-black"
-                    placeholder="12-digit Aadhaar Number"
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs"
+                    placeholder="Aadhaar Number *"
                   />
                   {kycForm.formState.errors.aadhaar && (
-                    <p className="text-xs text-red-500 mt-1">
+                    <p className="text-[9px] text-red-500 font-bold">
                       {kycForm.formState.errors.aadhaar.message}
                     </p>
                   )}
+
+                  <textarea
+                    {...kycForm.register("address")}
+                    rows={2}
+                    className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs"
+                    placeholder="Registered Address *"
+                  />
                 </div>
 
-                <div className="bg-blue-50 p-3 rounded-lg flex gap-3 items-start">
-                  <ShieldCheck className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-blue-700">
-                    Your profile will be verified manually by admin after this
-                    step. You can start browsing immediately.
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    {...kycForm.register("acceptTerms")}
+                    className="rounded text-blue-600"
+                  />
+                  <span className="text-[9px] font-bold text-gray-500">
+                    I accept Terms & Conditions
+                  </span>
+                </label>
+                {kycForm.formState.errors.acceptTerms && (
+                  <p className="text-[9px] text-red-500 font-bold">
+                    {kycForm.formState.errors.acceptTerms.message}
                   </p>
-                </div>
+                )}
 
                 <button
                   type="submit"
                   disabled={loading || !kycForm.formState.isValid}
-                  className="w-full bg-[#2563eb] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="w-full bg-blue-600 text-white rounded-2xl py-4 font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-100 hover:scale-[1.02] transition-transform disabled:opacity-50"
                 >
                   {loading ? "Submitting..." : "Submit & Verify Phone"}
                 </button>
