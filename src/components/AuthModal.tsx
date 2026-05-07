@@ -533,6 +533,15 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleKYCSubmit = async (data: KYCInput) => {
     setError("");
     setNotice("");
+
+    if (!data.companyName?.trim()) {
+      kycForm.setError("companyName", {
+        type: "manual",
+        message: "Company name is required",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/auth/kyc", {
@@ -1308,8 +1317,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <input
                     {...kycForm.register("companyName")}
                     className="w-full px-4 py-2.5 rounded-xl border-none bg-gray-50 focus:ring-2 focus:ring-blue-500/10 font-bold text-xs"
-                    placeholder="Company Name (Optional)"
+                    placeholder="Company Name *"
                   />
+                  {kycForm.formState.errors.companyName && (
+                    <p className="text-[9px] text-red-500 font-bold">
+                      {kycForm.formState.errors.companyName.message}
+                    </p>
+                  )}
 
                   <input
                     {...kycForm.register("gstin")}

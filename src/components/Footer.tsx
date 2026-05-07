@@ -46,7 +46,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-white border-t border-slate-100 w-full overflow-hidden">
+    <footer className="bg-blue-50 border-t border-slate-100 w-full overflow-hidden">
         
       {/* Sponsors Carousel Section */}
       <div className="border-b border-slate-100 bg-slate-50/50 py-8 overflow-hidden relative w-full">
