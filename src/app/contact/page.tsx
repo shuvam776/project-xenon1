@@ -29,8 +29,9 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 relative">
           <div className="hidden lg:block absolute top-[60px] left-[15%] right-[15%] h-0.5 bg-slate-200 -z-10"></div>
           
-          <div className="relative group bg-white p-8 border-2 border-slate-200 hover:border-blue-500 rounded-none hover:shadow-xl transition-all duration-300 lg:-translate-y-6">
-            <div className="w-14 h-14 bg-blue-50 border border-blue-100 flex items-center justify-center mb-8">
+          <div className="relative group bg-white p-8 border-2 border-slate-100 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 overflow-hidden lg:-translate-y-6">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-blue-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div className="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110">
               <Mail className="w-6 h-6 text-blue-600" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-3">Email</h3>
@@ -45,8 +46,9 @@ export default function ContactPage() {
             </a>
           </div>
 
-          <div className="relative group bg-white p-8 border-2 border-slate-200 hover:border-green-500 rounded-none hover:shadow-xl transition-all duration-300 lg:translate-y-6">
-            <div className="w-14 h-14 bg-green-50 border border-green-100 flex items-center justify-center mb-8">
+          <div className="relative group bg-white p-8 border-2 border-slate-100 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 overflow-hidden lg:translate-y-6">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-green-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110">
               <Phone className="w-6 h-6 text-green-600" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-3">Phone</h3>
@@ -61,8 +63,9 @@ export default function ContactPage() {
             </a>
           </div>
 
-          <div className="relative group bg-white p-8 border-2 border-slate-200 hover:border-emerald-500 rounded-none hover:shadow-xl transition-all duration-300 lg:-translate-y-6">
-            <div className="w-14 h-14 bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-8">
+          <div className="relative group bg-white p-8 border-2 border-slate-100 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 overflow-hidden lg:-translate-y-6">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-emerald-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div className="w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110">
               <MessageCircle className="w-6 h-6 text-emerald-600" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-3">WhatsApp</h3>
@@ -77,8 +80,9 @@ export default function ContactPage() {
             </a>
           </div>
 
-          <div className="relative group bg-white p-8 border-2 border-slate-200 hover:border-orange-500 rounded-none hover:shadow-xl transition-all duration-300 lg:translate-y-6">
-            <div className="w-14 h-14 bg-orange-50 border border-orange-100 flex items-center justify-center mb-8">
+          <div className="relative group bg-white p-8 border-2 border-slate-100 rounded-[2.5rem] hover:shadow-2xl transition-all duration-500 overflow-hidden lg:translate-y-6">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-orange-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
+            <div className="w-16 h-16 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110">
               <MapPin className="w-6 h-6 text-orange-600" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-3">Office</h3>

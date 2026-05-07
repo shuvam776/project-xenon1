@@ -800,7 +800,7 @@ export default function VendorDashboard() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 overflow-hidden" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col">
+      <aside className="w-64 bg-white border-r border-gray-100 items-center pt-4 pb-8 px-4 hidden lg:flex lg:flex-col sticky top-0 h-screen">
         <div className="mb-2 w-full px-2"></div>
 
         <nav className="w-full flex-1 space-y-2">
