@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import "@fontsource/chiron-goround-tc";
@@ -88,7 +88,6 @@ type BlockedRange = {
 
 export default function VendorDashboard() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [hoardings, setHoardings] = useState<Hoarding[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<"dashboard" | "listings" | "sold" | "chat">("dashboard");
@@ -159,14 +158,15 @@ export default function VendorDashboard() {
 
   useEffect(() => {
     if (!authChecked || !canAddHoarding) return;
-    if (searchParams.get("openAdd") !== "1") return;
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("openAdd") !== "1") return;
 
     setIsAddModalOpen(true);
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.delete("openAdd");
-    const queryString = nextParams.toString();
+    params.delete("openAdd");
+    const queryString = params.toString();
     router.replace(queryString ? `/vendor/dashboard?${queryString}` : "/vendor/dashboard");
-  }, [authChecked, canAddHoarding, searchParams, router]);
+  }, [authChecked, canAddHoarding, router]);
 
   const getMessageParty = (
     party?: string | { _id: string; role?: string; name?: string } | null,
