@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  ArrowLeft,
   X,
   Mail,
   Phone,
@@ -167,6 +168,25 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleClose = () => {
     resetModalState();
     onClose();
+  };
+
+  const handleBack = () => {
+    setError("");
+    setNotice("");
+
+    if (step === "forgot-password") {
+      setStep("auth");
+      return;
+    }
+
+    if (step === "kyc") {
+      setStep("kyc-choice");
+      return;
+    }
+
+    if (step !== "role") {
+      setStep("role");
+    }
   };
 
   const moveToEmailVerification = (
@@ -689,47 +709,31 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col md:flex-row min-h-[500px]">
-        {/* Left Side - Brand / Info (Hidden on mobile) */}
-        <div className="hidden md:flex md:w-5/12 bg-[#2563eb] p-8 flex-col justify-between text-white relative overflow-hidden">
-          <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-2">
-              Empowering All To Advertise
-            </h2>
-            <p className="text-blue-200">
-              Find and buy the best media spots online.
-            </p>
-          </div>
-
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-blue-500/30 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-indigo-400/30 blur-3xl"></div>
-
-          <div className="relative z-20 isolate">
-            <div className="flex items-center gap-2 mix-blend-multiply">
-              {/* Actual Logo with forced blending properties */}
-              <Image
-                src="/companyLogo/Screenshot 2026-03-02 at 02.10.29.png"
-                alt="HoardSpace Logo"
-                width={160}
-                height={50}
-                className="h-10 w-auto object-contain contrast-[1.2] brightness-110"
-                style={{ mixBlendMode: 'multiply' }}
-                priority
-              />
-            </div>
-          </div>
-        </div>
-
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Right Side - Forms */}
-        <div className="w-full md:w-7/12 p-8 relative bg-white">
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X size={20} />
-          </button>
+        <div className="w-full p-6 md:p-8 relative bg-white">
+          <div className="flex flex-col">
+            <div className="mb-4 flex items-center justify-between min-h-6">
+              {step !== "role" ? (
+                <button
+                  onClick={handleBack}
+                  className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <ArrowLeft size={16} />
+                  Back
+                </button>
+              ) : (
+                <div />
+              )}
 
-          <div className="h-full flex flex-col justify-center">
+              <button
+                onClick={handleClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
             {/* Steps Visual Indicator (Optional) */}
             <div className="mb-6 flex gap-2">
               {currentStepOrder.map((s, i) => (

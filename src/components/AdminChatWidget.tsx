@@ -215,7 +215,7 @@ export default function AdminChatWidget() {
                   <h3 className="text-[15px] font-semibold leading-tight">HoardSpace Support</h3>
                   <p className="mt-0.5 text-[12px] font-medium tracking-wide text-blue-100 opacity-90">
                     {canUseAdminChat
-                      ? "Replies from the admin team"
+                      ? "Usually get replies within 12-24 hours"
                       : "Login to message support"}
                   </p>
                 </div>
