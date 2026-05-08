@@ -7,13 +7,13 @@ import Link from "next/link";
 export default async function Home() {
   await connectDB();
   const fallbackThumbnail = "/hoarding.jpg";
-  
+
   // Fetch top 6 cities with the most approved hoardings
   const cityAgg = await Hoarding.aggregate([
     { $match: { status: 'approved' } },
     { $group: { _id: "$location.city", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 6 }
+    { $limit: 9 }
   ]);
 
   const colors = ["bg-blue-50", "bg-orange-50", "bg-indigo-50", "bg-emerald-50", "bg-rose-50", "bg-amber-50"];
@@ -47,6 +47,9 @@ export default async function Home() {
       { city: "Kolkata", count: 0, color: "bg-emerald-50", thumbnail: fallbackThumbnail },
       { city: "Delhi", count: 0, color: "bg-rose-50", thumbnail: fallbackThumbnail },
       { city: "Bangalore", count: 0, color: "bg-amber-50", thumbnail: fallbackThumbnail },
+      { city: "Pune", count: 0, color: "bg-blue-50", thumbnail: fallbackThumbnail },
+      { city: "Hyderabad", count: 0, color: "bg-orange-50", thumbnail: fallbackThumbnail },
+      { city: "Ahmedabad", count: 0, color: "bg-indigo-50", thumbnail: fallbackThumbnail },
     ];
   }
 
@@ -62,7 +65,7 @@ export default async function Home() {
         {/*body */}
         {/*good*/}
         <div className="max-w-7xl mx-auto w-full pt-6 pb-32 md:pb-40 relative z-20 flex flex-col items-center justify-center">
-          
+
           {/* Main Heading */}
           <div className="text-center w-full space-y-6 mb-12 flex flex-col items-center">
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -75,7 +78,7 @@ export default async function Home() {
                 </span> online all across India
               </h1>
             </div>
-            
+
             {/* Subheading */}
             <p className="text-center text-slate-700 font-medium text-lg md:text-xl max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
               An online marketplace for listing and booking hoardings online by connecting hoarding vendors and advertisers in one place
@@ -83,7 +86,7 @@ export default async function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto relative z-[100] animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
+          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto  z-[100] animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
             <SearchBar />
           </div>
         </div>
@@ -101,21 +104,21 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredLocations.map((loc, idx) => (
-              <Link 
+              <Link
                 href={`/explore?city=${encodeURIComponent(loc.city)}`}
                 key={idx}
                 className="group relative overflow-hidden rounded-3xl border border-slate-100 hover:border-blue-200 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 cursor-pointer block"
               >
                 <div className={`h-48 ${loc.color} flex items-center justify-center overflow-hidden relative`}>
-                   <img
-                     src={loc.thumbnail}
-                     alt={`${loc.city} featured hoarding`}
-                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                   />
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-slate-900/10 to-transparent"></div>
-                   <h3 className="relative text-3xl font-black text-white/80 group-hover:text-white transition-colors uppercase tracking-widest scale-110 whitespace-nowrap px-4 text-center">
-                     {loc.city}
-                   </h3>
+                  <img
+                    src={loc.thumbnail}
+                    alt={`${loc.city} featured hoarding`}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-slate-900/10 to-transparent"></div>
+                  <h3 className="relative text-3xl font-black text-white/80 group-hover:text-white transition-colors uppercase tracking-widest scale-110 whitespace-nowrap px-4 text-center">
+                    {loc.city}
+                  </h3>
                 </div>
                 <div className="p-8 bg-white border-t border-slate-50">
                   <h4 className="text-xl font-black text-slate-900 mb-1">{loc.city}</h4>
@@ -125,7 +128,7 @@ export default async function Home() {
                   <div className="mt-6 flex items-center justify-between">
                     <span className="text-[11px] font-black uppercase tracking-widest text-blue-600">View Spaces</span>
                     <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white group-hover:bg-blue-600 transition-colors">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                     </div>
                   </div>
                 </div>
