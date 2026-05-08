@@ -113,8 +113,8 @@ export async function POST(req: Request) {
 
     await dbConnect();
     const user = await User.findById(payload.userId);
-    if (!user || user.role !== 'vendor') {
-      return NextResponse.json({ error: "Only vendors can list hoardings" }, { status: 403 });
+    if (!user || (user.role !== 'vendor' && user.role !== 'admin')) {
+      return NextResponse.json({ error: "Only vendors or admins can list hoardings" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -150,7 +150,7 @@ export async function POST(req: Request) {
       uniqueReach: data.uniqueReach,
 
       images: data.images || [],
-      owner: user._id,
+      owner: user.role === 'admin' && body.ownerId ? body.ownerId : user._id,
       status: 'approved' // Auto-publish immediately
     });
 

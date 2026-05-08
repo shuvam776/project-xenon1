@@ -30,10 +30,12 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const status = searchParams.get('status');
         const city = searchParams.get('city');
+        const owner = searchParams.get('owner');
 
         const query: any = {};
         if (status) query.status = status;
         if (city) query['location.city'] = { $regex: new RegExp(city, 'i') };
+        if (owner) query.owner = owner;
 
         const hoardings = await Hoarding.find(query)
             .populate('owner', 'name email phone role')

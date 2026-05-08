@@ -678,14 +678,23 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Shield className="text-[#2563eb]" size={32} />
-            Admin Dashboard
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Manage users, hoardings, and platform operations
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Shield className="text-[#2563eb]" size={32} />
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Manage users, hoardings, and platform operations
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/admin/vendors")}
+            className="bg-white text-[#2563eb] border-2 border-blue-50 px-6 py-4 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all shadow-xl shadow-blue-900/5 flex items-center justify-center gap-2 group"
+          >
+            <Building2 size={20} className="group-hover:scale-110 transition-transform" />
+            Vendor Management
+          </button>
         </div>
 
         {/* Stats Overview */}

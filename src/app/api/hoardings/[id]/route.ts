@@ -64,8 +64,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       await dbConnect();
       const user = await User.findById(payload.userId);
 
-      if (!user || user.role !== 'vendor') {
-         return NextResponse.json({ error: "Only vendors can update hoardings" }, { status: 403 });
+      if (!user || (user.role !== 'vendor' && user.role !== 'admin')) {
+         return NextResponse.json({ error: "Only vendors or admins can update hoardings" }, { status: 403 });
       }
 
       // Find the hoarding
@@ -75,7 +75,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
 
       // Verify ownership
-      if (hoarding.owner.toString() !== user._id.toString()) {
+      if (user.role !== 'admin' && hoarding.owner.toString() !== user._id.toString()) {
          return NextResponse.json({ error: "You can only edit your own hoardings" }, { status: 403 });
       }
 
@@ -144,8 +144,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       await dbConnect();
       const user = await User.findById(payload.userId);
 
-      if (!user || user.role !== 'vendor') {
-         return NextResponse.json({ error: "Only vendors can delete hoardings" }, { status: 403 });
+      if (!user || (user.role !== 'vendor' && user.role !== 'admin')) {
+         return NextResponse.json({ error: "Only vendors or admins can delete hoardings" }, { status: 403 });
       }
 
       // Find the hoarding
@@ -155,7 +155,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       }
 
       // Verify ownership
-      if (hoarding.owner.toString() !== user._id.toString()) {
+      if (user.role !== 'admin' && hoarding.owner.toString() !== user._id.toString()) {
          return NextResponse.json({ error: "You can only delete your own hoardings" }, { status: 403 });
       }
 
