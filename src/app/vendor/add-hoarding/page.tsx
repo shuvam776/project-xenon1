@@ -49,6 +49,11 @@ export default function AddHoardingPage() {
           return;
         }
 
+        if (data.user.kycStatus !== "approved" && data.user.kycStatus !== "verified") {
+          router.push("/profile?kyc_required=true");
+          return;
+        }
+
         setAuthChecked(true);
       } catch (error) {
         console.error("Auth check failed", error);

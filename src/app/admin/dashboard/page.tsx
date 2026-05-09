@@ -688,13 +688,22 @@ export default function AdminDashboard() {
               Manage users, hoardings, and platform operations
             </p>
           </div>
-          <button
-            onClick={() => router.push("/admin/vendors")}
-            className="bg-white text-[#2563eb] border-2 border-blue-50 px-6 py-4 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all shadow-xl shadow-blue-900/5 flex items-center justify-center gap-2 group"
-          >
-            <Building2 size={20} className="group-hover:scale-110 transition-transform" />
-            Vendor Management
-          </button>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={() => router.push("/admin/buyers")}
+              className="bg-white text-[#2563eb] border-2 border-blue-50 px-6 py-4 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all shadow-xl shadow-blue-900/5 flex items-center justify-center gap-2 group"
+            >
+              <Users size={20} className="group-hover:scale-110 transition-transform" />
+              Buyer Management
+            </button>
+            <button
+              onClick={() => router.push("/admin/vendors")}
+              className="bg-white text-[#2563eb] border-2 border-blue-50 px-6 py-4 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all shadow-xl shadow-blue-900/5 flex items-center justify-center gap-2 group"
+            >
+              <Building2 size={20} className="group-hover:scale-110 transition-transform" />
+              Vendor Management
+            </button>
+          </div>
         </div>
 
         {/* Stats Overview */}

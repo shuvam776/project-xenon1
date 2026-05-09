@@ -227,16 +227,7 @@ export default function BookingPage() {
       return;
     }
 
-    if (!isBuyerKycVerified) {
-      setError(
-        selectedBookingId
-          ? "Complete and verify your KYC before making payments."
-          : "Complete and verify your KYC before booking hoardings.",
-      );
-      setSuccessMsg("");
-      setWishlistMsg("");
-      return;
-    }
+    // KYC check removed for buyers to facilitate easier payment process.
 
     if (!startDate || !endDate) {
       setError("Please select campaign dates");
@@ -597,10 +588,8 @@ export default function BookingPage() {
               )}
 
               {user?.role === "buyer" && !isBuyerKycVerified && (
-                <div className="p-4 text-xs font-bold rounded-2xl border bg-amber-50 text-amber-700 border-amber-100">
-                  {selectedBookingId
-                    ? "Complete and verify your KYC before making payment."
-                    : "Complete and verify your KYC before sending a booking request."}
+                <div className="p-4 text-xs font-bold rounded-2xl border bg-blue-50 text-blue-700 border-blue-100">
+                  Note: Verification is recommended for faster approvals, but you can complete it later from your profile.
                 </div>
               )}
 
@@ -624,7 +613,7 @@ export default function BookingPage() {
 
               <button
                 onClick={handleBookingAction}
-                disabled={processing || (user?.role === "buyer" && !isBuyerKycVerified)}
+                disabled={processing}
                 className="w-full bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-xl shadow-blue-100 hover:scale-[1.02] active:scale-95 transition-all"
               >
                 {processing ? (

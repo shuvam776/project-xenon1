@@ -34,12 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!["approved", "verified"].includes(user.kycStatus || "")) {
-      return NextResponse.json(
-        { error: "Buyer KYC must be verified before booking hoardings." },
-        { status: 403 },
-      );
-    }
+    // Buyer KYC check removed to facilitate easier booking process.
 
     const { hoardingId, startDate, endDate } = await req.json();
     if (!hoardingId || !startDate || !endDate) {

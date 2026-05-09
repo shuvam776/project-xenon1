@@ -45,12 +45,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!["approved", "verified"].includes(user.kycStatus || "")) {
-      return NextResponse.json(
-        { error: "Buyer KYC must be verified before making payments." },
-        { status: 403 },
-      );
-    }
+    // Buyer KYC check removed to facilitate easier booking process.
 
     const booking = await Booking.findOne({
       _id: bookingId,
