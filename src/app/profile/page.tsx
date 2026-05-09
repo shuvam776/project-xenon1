@@ -6,8 +6,9 @@ import {
   useEffect,
   useRef,
   useState,
+  Suspense,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,8 +59,10 @@ function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
-export default function ProfilePage() {
+function ProfileContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const kycRequired = searchParams.get("kyc_required") === "true";
   const [user, setUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [kycSubmitting, setKycSubmitting] = useState(false);
@@ -247,6 +250,25 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 py-12 px-4 sm:px-6 lg:px-8" style={{ fontFamily: "'Chiron GoRound TC', sans-serif" }}>
       <div className="max-w-6xl mx-auto space-y-8">
+        {kycRequired && displayKycStatus !== "approved" && (
+          <div className="bg-red-50 border-2 border-red-100 p-6 rounded-[32px] flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center gap-4">
+              <div className="bg-red-500 text-white p-3 rounded-2xl">
+                <ShieldCheck size={24} />
+              </div>
+              <div>
+                <h3 className="font-black text-red-900 text-lg uppercase tracking-tight">KYC Verification Required</h3>
+                <p className="text-red-700 text-sm font-medium">Please complete your verification details below to enable hoarding management features.</p>
+              </div>
+            </div>
+            <a 
+              href="#kyc-section" 
+              className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-colors shrink-0"
+            >
+              Fill Details
+            </a>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <h2 className="text-4xl font-black tracking-tight leading-tight">
             <span className="font-sans font-black text-slate-900 mr-2">Your</span>
@@ -426,7 +448,7 @@ export default function ProfilePage() {
 
           {/* Box 4: Conditional Action Area (Bottom Right) */}
           {user.role !== "admin" && (!user.isPhoneVerified || ["not_submitted", "rejected", "submitted"].includes(displayKycStatus)) && (
-            <div className="md:col-span-4 space-y-6">
+            <div id="kyc-section" className="md:col-span-4 space-y-6">
               {!user.isPhoneVerified && (
                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm relative">
                   <div className="space-y-6">
@@ -513,5 +535,17 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563eb]"></div>
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }

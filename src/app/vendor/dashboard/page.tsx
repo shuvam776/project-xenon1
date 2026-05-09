@@ -157,10 +157,15 @@ export default function VendorDashboard() {
     userData?.kycStatus === "approved" || userData?.kycStatus === "verified";
 
   useEffect(() => {
-    if (!authChecked || !canAddHoarding) return;
+    if (!authChecked) return;
 
     const params = new URLSearchParams(window.location.search);
     if (params.get("openAdd") !== "1") return;
+
+    if (!canAddHoarding) {
+      router.push("/profile?kyc_required=true");
+      return;
+    }
 
     setIsAddModalOpen(true);
     params.delete("openAdd");
@@ -619,11 +624,18 @@ export default function VendorDashboard() {
   };
 
   const openAddHoardingModal = () => {
-    if (!canAddHoarding) return;
+    if (!canAddHoarding) {
+      router.push("/profile?kyc_required=true");
+      return;
+    }
     setIsAddModalOpen(true);
   };
 
   const openAvailabilityModal = async (hoarding: Hoarding) => {
+    if (!canAddHoarding) {
+      router.push("/profile?kyc_required=true");
+      return;
+    }
     setAvailabilityModal({
       isOpen: true,
       hoardingId: hoarding._id,
