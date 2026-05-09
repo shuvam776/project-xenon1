@@ -257,16 +257,32 @@ function ProfileContent() {
                 <ShieldCheck size={24} />
               </div>
               <div>
-                <h3 className="font-black text-red-900 text-lg uppercase tracking-tight">KYC Verification Required</h3>
-                <p className="text-red-700 text-sm font-medium">Please complete your verification details below to enable hoarding management features.</p>
+                <h3 className="font-black text-red-900 text-lg uppercase tracking-tight">
+                  {user.role === "buyer" ? "Verification Recommended" : "KYC Verification Required"}
+                </h3>
+                <p className="text-red-700 text-sm font-medium">
+                  {user.role === "buyer" 
+                    ? "Verification is recommended for faster approvals, but you can proceed to book hoardings now and complete this later."
+                    : "Please complete your verification details below to enable hoarding management features."}
+                </p>
               </div>
             </div>
-            <a 
-              href="#kyc-section" 
-              className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-colors shrink-0"
-            >
-              Fill Details
-            </a>
+            <div className="flex gap-3">
+              <a 
+                href="#kyc-section" 
+                className="px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-colors shrink-0"
+              >
+                {user.role === "buyer" ? "Verify Now" : "Fill Details"}
+              </a>
+              {user.role === "buyer" && (
+                <button 
+                  onClick={() => router.push("/explore")}
+                  className="px-6 py-3 bg-white text-red-600 border-2 border-red-100 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-50 transition-colors shrink-0"
+                >
+                  Do Later
+                </button>
+              )}
+            </div>
           </div>
         )}
         <div className="flex items-center justify-between">
@@ -276,7 +292,7 @@ function ProfileContent() {
           </h2>
         </div>
 
-        <div className={isFullyVerified ? "grid grid-cols-1 md:grid-cols-12 gap-6" : "flex flex-col max-w-3xl mx-auto gap-6 w-full"}>
+        <div className={(isFullyVerified || user.role === "buyer") ? "grid grid-cols-1 md:grid-cols-12 gap-6" : "flex flex-col max-w-3xl mx-auto gap-6 w-full"}>
           {/* Box 1: Identity (Top Left) */}
           <div className="md:col-span-8 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center gap-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />

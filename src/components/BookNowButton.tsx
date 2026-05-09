@@ -56,37 +56,9 @@ export default function BookNowButton({
         return;
       }
 
-      // Step 4: Check KYC status
-      if (normalizedStatus === "not_submitted") {
-        setError("Please complete KYC verification from your profile");
-        setTimeout(() => router.push("/profile"), 1000);
-        setChecking(false);
-        return;
-      }
-
-      if (normalizedStatus === "submitted") {
-        setError("Your KYC is under review. Please wait for admin approval");
-        setTimeout(() => setError(""), 3000);
-        setChecking(false);
-        return;
-      }
-
-      if (normalizedStatus === "rejected") {
-        setError("Your KYC was rejected. Please update from your profile");
-        setTimeout(() => router.push("/profile"), 1000);
-        setChecking(false);
-        return;
-      }
-
-      // Step 5: Only approved/verified users can proceed
-      if (normalizedStatus === "approved") {
-        console.log("All checks passed, navigating to booking page");
-        router.push(`/bookings/${hoardingId}`);
-      } else {
-        setError("KYC verification required to book");
-        setTimeout(() => setError(""), 4000);
-        setChecking(false);
-      }
+      // Step 4: Proceed to booking (KYC check removed for buyers)
+      console.log("Proceeding to booking page");
+      router.push(`/bookings/${hoardingId}`);
     } catch (error) {
       console.error("Auth check error:", error);
       // If there's any error, open auth modal

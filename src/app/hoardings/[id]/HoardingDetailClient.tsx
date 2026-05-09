@@ -250,11 +250,7 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
       return;
     }
 
-    if (currentUserRole === "buyer" && !isBuyerKycVerified) {
-      setBookSuccessMessage("");
-      setBookRoleMessage("Complete and verify your KYC before booking hoardings.");
-      return;
-    }
+    // KYC check removed for buyers as per user request to facilitate easier booking.
 
     if (!selectedDates.start || !selectedDates.end) {
       setBookSuccessMessage("");
@@ -593,8 +589,8 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
               )}
 
               {currentUserRole === "buyer" && !isBuyerKycVerified && (
-                <div className="p-3 bg-amber-50 text-amber-700 text-xs rounded-lg font-medium">
-                  Complete and verify your KYC before sending a booking request.
+                <div className="p-3 bg-blue-50 text-blue-700 text-xs rounded-lg font-medium">
+                  Note: Verification is recommended for faster approvals, but you can complete it later from your profile.
                 </div>
               )}
 
@@ -622,7 +618,6 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
                 onClick={handleBookNow}
                 disabled={
                   bookingRequestLoading ||
-                  (currentUserRole === "buyer" && !isBuyerKycVerified) ||
                   !!dateError ||
                   !selectedDates.start ||
                   !selectedDates.end
