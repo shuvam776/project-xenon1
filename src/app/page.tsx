@@ -58,8 +58,10 @@ export default async function Home() {
       {/* Modern Left-Aligned Hero Section */}
       <section id="home" className="relative z-30 w-full min-h-[70vh] flex flex-col pt-20 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/background.png')", clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
         {/* Subtle Decorative Gradients */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
-        <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-b-[inherit]">
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-blue-100/60 rounded-full blur-3xl opacity-70"></div>
+          <div className="absolute bottom-0 right-1/4 translate-y-1/4 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60"></div>
+        </div>
 
         {/* Artistic Blended Billboard Imagery */}
         {/*body */}
