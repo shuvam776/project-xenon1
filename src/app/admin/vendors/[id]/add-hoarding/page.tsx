@@ -193,6 +193,16 @@ export default function AdminAddHoardingForVendorPage() {
 
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           {error && <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl font-bold">{error}</div>}
+          {Object.keys(errors).length > 0 && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl font-bold">
+              Please fix the following errors:
+              <ul className="list-disc pl-5 mt-2 text-sm font-medium">
+                {Object.entries(errors).map(([field, err]) => (
+                  <li key={field}>{err?.message as string || `${field} is invalid`}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           {success && (
             <div className="mb-6 p-4 bg-green-50 text-green-600 rounded-xl flex items-center gap-2 font-bold">
               <CheckCircle /> {success}
@@ -303,6 +313,15 @@ export default function AdminAddHoardingForVendorPage() {
                   />
                   {errors.city && <p className="text-xs text-red-500 mt-1 font-bold">{errors.city.message}</p>}
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">State</label>
+                  <input
+                    {...register("state")}
+                    placeholder="e.g. Maharashtra"
+                    className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-medium"
+                  />
+                  {errors.state && <p className="text-xs text-red-500 mt-1 font-bold">{errors.state.message}</p>}
+                </div>
               </div>
               <div className="mt-4 rounded-2xl overflow-hidden border">
                 <MapLocationPicker
@@ -360,6 +379,25 @@ export default function AdminAddHoardingForVendorPage() {
                     type="number"
                     className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
                   />
+                  {errors.uniqueReach && <p className="text-xs text-red-500 mt-1 font-bold">{errors.uniqueReach.message}</p>}
+                </div>
+                <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-1">Width (ft)</label>
+                   <input
+                    {...register("width", { valueAsNumber: true })}
+                    type="number"
+                    className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
+                  />
+                  {errors.width && <p className="text-xs text-red-500 mt-1 font-bold">{errors.width.message}</p>}
+                </div>
+                <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-1">Height (ft)</label>
+                   <input
+                    {...register("height", { valueAsNumber: true })}
+                    type="number"
+                    className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
+                  />
+                  {errors.height && <p className="text-xs text-red-500 mt-1 font-bold">{errors.height.message}</p>}
                 </div>
               </div>
             </div>
