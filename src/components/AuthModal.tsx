@@ -811,7 +811,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">
-                      Sign in as advertiser
+                      Sign in as buyer/client
                     </h3>
                     <p className="text-xs text-gray-500">
                       Find and book advertising spaces
