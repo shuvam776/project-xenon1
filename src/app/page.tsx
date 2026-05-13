@@ -8,21 +8,19 @@ export default async function Home() {
   await connectDB();
   const fallbackThumbnail = "/hoarding.jpg";
 
-  // Fetch top 6 cities with the most approved hoardings
-  const cityAgg = await Hoarding.aggregate([
-    { $match: { status: 'approved' } },
-    { $group: { _id: "$location.city", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 9 }
-  ]);
-
-  const colors = ["bg-blue-50", "bg-orange-50", "bg-indigo-50", "bg-emerald-50", "bg-rose-50", "bg-amber-50"];
+  const targetCities = ["Cuttack", "Bhubaneswar", "Puri"];
+  const colors = ["bg-indigo-50", "bg-blue-50", "bg-orange-50"];
 
   let featuredLocations = await Promise.all(
-    cityAgg.map(async (item, idx) => {
+    targetCities.map(async (city, idx) => {
+      const count = await Hoarding.countDocuments({
+        status: "approved",
+        "location.city": new RegExp(`^${city}$`, "i"),
+      });
+
       const sampleHoarding = await Hoarding.findOne({
         status: "approved",
-        "location.city": item._id,
+        "location.city": new RegExp(`^${city}$`, "i"),
         images: { $exists: true, $ne: [] },
       })
         .sort({ createdAt: -1 })
@@ -30,28 +28,13 @@ export default async function Home() {
         .lean();
 
       return {
-        city: item._id,
-        count: item.count,
+        city: city,
+        count: count,
         color: colors[idx % colors.length],
         thumbnail: sampleHoarding?.images?.[0] || fallbackThumbnail,
       };
     }),
   );
-
-  // Fallback if no hoardings in DB yet
-  if (featuredLocations.length === 0) {
-    featuredLocations = [
-      { city: "Bhubaneswar", count: 0, color: "bg-blue-50", thumbnail: fallbackThumbnail },
-      { city: "Mumbai", count: 0, color: "bg-orange-50", thumbnail: fallbackThumbnail },
-      { city: "Cuttack", count: 0, color: "bg-indigo-50", thumbnail: fallbackThumbnail },
-      { city: "Kolkata", count: 0, color: "bg-emerald-50", thumbnail: fallbackThumbnail },
-      { city: "Delhi", count: 0, color: "bg-rose-50", thumbnail: fallbackThumbnail },
-      { city: "Bangalore", count: 0, color: "bg-amber-50", thumbnail: fallbackThumbnail },
-      { city: "Pune", count: 0, color: "bg-blue-50", thumbnail: fallbackThumbnail },
-      { city: "Hyderabad", count: 0, color: "bg-orange-50", thumbnail: fallbackThumbnail },
-      { city: "Ahmedabad", count: 0, color: "bg-indigo-50", thumbnail: fallbackThumbnail },
-    ];
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-outfit">

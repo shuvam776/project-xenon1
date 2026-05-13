@@ -5,23 +5,129 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, ChevronDown, Search, User, Tag, Camera } from "lucide-react";
 
+const DualRangeSlider = ({ min, max, val1, val2, onChange }: { min: number, max: number, val1: number, val2: number, onChange: (v1: number, v2: number) => void }) => {
+  const getPercent = (value: number) => {
+    if (max === min) return 0;
+    return Math.round(((value - min) / (max - min)) * 100);
+  };
+
+  return (
+    <div className="relative w-full h-8 flex items-center dual-range">
+      <div className="absolute w-full h-1.5 bg-gray-200 rounded-full" />
+      <div 
+        className="absolute h-1.5 bg-[#2563eb] rounded-full pointer-events-none" 
+        style={{ left: `${getPercent(val1)}%`, width: `${getPercent(val2) - getPercent(val1)}%` }}
+      />
+      <input 
+        type="range" min={min} max={max} value={val1} 
+        onChange={e => {
+          const value = Math.min(Number(e.target.value), val2);
+          onChange(value, val2);
+        }}
+        className="absolute w-full appearance-none bg-transparent pointer-events-none z-20"
+      />
+      <input 
+        type="range" min={min} max={max} value={val2} 
+        onChange={e => {
+          const value = Math.max(Number(e.target.value), val1);
+          onChange(val1, value);
+        }}
+        className="absolute w-full appearance-none bg-transparent pointer-events-none z-20"
+      />
+      <style dangerouslySetInnerHTML={{__html: `
+        .dual-range input[type=range]::-webkit-slider-thumb {
+          pointer-events: auto;
+          -webkit-appearance: none;
+          width: 18px;
+          height: 18px;
+          background: white;
+          border: 3px solid #2563eb;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .dual-range input[type=range]::-moz-range-thumb {
+          pointer-events: auto;
+          width: 18px;
+          height: 18px;
+          background: white;
+          border: 3px solid #2563eb;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+      `}} />
+    </div>
+  );
+};
+
 export default function ExploreClient({ initialHoardings, initialCity = "" }: { initialHoardings: any[], initialCity?: string }) {
   const [hoardings, setHoardings] = useState(initialHoardings);
   const [searchQuery, setSearchQuery] = useState(initialCity);
   const [sortBy, setSortBy] = useState("default");
   
-  // Dummy filtering state purely for UI mimicry
+  // Filtering state
   const [locationOpen, setLocationOpen] = useState(true);
   const [adOptionsOpen, setAdOptionsOpen] = useState(true);
   const [litOpen, setLitOpen] = useState(true);
+  const [sizeOpen, setSizeOpen] = useState(true);
+  const [priceOpen, setPriceOpen] = useState(true);
 
-  // Pre-process hoardings for pricing consistency
+  // Pre-process hoardings for pricing consistency (Show face value)
   const processedHoardings = hoardings.map(h => {
-    const minSpend = (typeof h.minimumBookingAmount === "number" && h.minimumBookingAmount > 0)
-      ? h.minimumBookingAmount
-      : (h.pricePerMonth || 0);
-    return { ...h, effectiveMinSpend: minSpend };
+    // Show face value (basePricePerMonth) if available, otherwise fallback to pricePerMonth
+    const faceValue = h.basePricePerMonth || h.pricePerMonth || 0;
+    return { ...h, effectiveMinSpend: faceValue };
   });
+
+  const lowestPrice = processedHoardings.length > 0 ? Math.min(...processedHoardings.map(h => h.effectiveMinSpend)) : 0;
+  const highestPrice = processedHoardings.length > 0 ? Math.max(...processedHoardings.map(h => h.effectiveMinSpend)) : 100000;
+  const maxAvailableWidth = processedHoardings.length > 0 ? Math.max(...processedHoardings.map(h => h.dimensions?.width || 0)) : 100;
+  const maxAvailableHeight = processedHoardings.length > 0 ? Math.max(...processedHoardings.map(h => h.dimensions?.height || 0)) : 100;
+
+  const [minPrice, setMinPrice] = useState<number>(lowestPrice);
+  const [maxPrice, setMaxPrice] = useState<number>(highestPrice);
+  const [minWidth, setMinWidth] = useState<number>(0);
+  const [maxWidth, setMaxWidth] = useState<number>(maxAvailableWidth);
+  const [minHeight, setMinHeight] = useState<number>(0);
+  const [maxHeight, setMaxHeight] = useState<number>(maxAvailableHeight);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedLitTypes, setSelectedLitTypes] = useState<string[]>([]);
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    types: [] as string[],
+    litTypes: [] as string[],
+    minWidth: 0,
+    maxWidth: maxAvailableWidth,
+    minHeight: 0,
+    maxHeight: maxAvailableHeight,
+    minPrice: lowestPrice,
+    maxPrice: highestPrice,
+  });
+
+  const typeOptions = ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "DOOH", "Other"];
+  const litOptions = ["Lit", "Non-Lit", "Front Lit", "Back Lit"];
+
+  const toggleType = (type: string) => {
+    setSelectedTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
+  };
+  
+  const toggleLitType = (lit: string) => {
+    setSelectedLitTypes(prev => prev.includes(lit) ? prev.filter(l => l !== lit) : [...prev, lit]);
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters({
+      types: selectedTypes,
+      litTypes: selectedLitTypes,
+      minWidth,
+      maxWidth,
+      minHeight,
+      maxHeight,
+      minPrice,
+      maxPrice,
+    });
+  };
 
   const normalize = (value: string = "") =>
     value
@@ -40,22 +146,40 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
     ),
   ).sort((a, b) => a.localeCompare(b, "en-IN"));
 
-  // Filter hoardings (mock client-side filtering)
+  // Filter hoardings
   const filteredHoardings = processedHoardings.filter((h) => {
-    if (!normalizedSearchQuery) return true;
-    const query = normalizedSearchQuery;
-    const city = normalize(h.location.city || "");
-    const state = (h.location.state || "").toLowerCase();
-    const name = (h.name || "").toLowerCase();
-    const area = (h.location.area || "").toLowerCase();
-    const address = (h.location.address || "").toLowerCase();
-    return (
-      city.includes(query) ||
-      state.includes(query) ||
-      name.includes(query) ||
-      area.includes(query) ||
-      address.includes(query)
-    );
+    // Location Filter
+    if (normalizedSearchQuery) {
+      const query = normalizedSearchQuery;
+      const city = normalize(h.location?.city || "");
+      const state = (h.location?.state || "").toLowerCase();
+      const name = (h.name || "").toLowerCase();
+      const area = (h.location?.area || "").toLowerCase();
+      const address = (h.location?.address || "").toLowerCase();
+      const matchesSearch = city.includes(query) || state.includes(query) || name.includes(query) || area.includes(query) || address.includes(query);
+      if (!matchesSearch) return false;
+    }
+
+    // Type Filter
+    if (appliedFilters.types.length > 0) {
+      if (!appliedFilters.types.includes(h.type)) return false;
+    }
+
+    // Lit Type Filter
+    if (appliedFilters.litTypes.length > 0) {
+      if (!appliedFilters.litTypes.includes(h.lightingType)) return false;
+    }
+
+    // Size Filter
+    const w = h.dimensions?.width || 0;
+    const hDim = h.dimensions?.height || 0;
+    if (w < appliedFilters.minWidth || w > appliedFilters.maxWidth) return false;
+    if (hDim < appliedFilters.minHeight || hDim > appliedFilters.maxHeight) return false;
+
+    // Price Filter
+    if (h.effectiveMinSpend < appliedFilters.minPrice || h.effectiveMinSpend > appliedFilters.maxPrice) return false;
+
+    return true;
   });
 
   // Sort hoardings
@@ -76,8 +200,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Sidebar Filters */}
-        <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-32 h-fit">
-          <div className="bg-white border text-gray-800 rounded-3xl p-6 h-full shadow-sm border-gray-100">
+        <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-32 lg:h-[calc(100vh-160px)]">
+          <div className="bg-white border text-gray-800 rounded-3xl p-6 h-full shadow-sm border-gray-100 overflow-y-auto custom-scrollbar">
             <h2 className="text-xl font-bold text-gray-900 mb-6 font-sans">Filters</h2>
 
             {/* LOCATION Filter */}
@@ -122,58 +246,157 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
               )}
             </div>
 
-            {/* AD OPTIONS Filter */}
+            {/* AD OPTIONS Filter (Type) */}
             <div className="mb-6 border-b border-gray-100 pb-6">
               <button 
                 onClick={() => setAdOptionsOpen(!adOptionsOpen)}
                 className="flex items-center justify-between w-full text-left font-bold text-slate-700 uppercase tracking-widest text-xs mb-4"
               >
-                AD OPTIONS
+                TYPE
                 <ChevronDown className={`w-4 h-4 transition-transform ${adOptionsOpen ? 'rotate-180' : ''}`} />
               </button>
               
               {adOptionsOpen && (
                 <div className="space-y-3">
-                  {/* <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-blue-500 transition-colors"></div>
-                    <span className="text-sm text-gray-600 group-hover:text-gray-900">Printing Charges <span className="text-gray-400 text-xs ml-1">(3155)</span></span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-blue-500 transition-colors"></div>
-                    <span className="text-sm text-gray-600 group-hover:text-gray-900">Mounting Charges <span className="text-gray-400 text-xs ml-1">(3155)</span></span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-5 h-5 rounded-full border-[6px] border-blue-500 transition-colors"></div>
-                    <span className="text-sm text-gray-900 font-medium">Bus Shelter <span className="text-gray-400 text-xs ml-1 font-normal">(2750)</span></span>
-                  </label>
-                  <button className="text-xs font-bold text-blue-600 uppercase tracking-wider mt-2 hover:underline">5 More</button> */}
+                  {typeOptions.map(type => (
+                    <label key={type} className="flex items-center gap-3 cursor-pointer group" onClick={() => toggleType(type)}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${selectedTypes.includes(type) ? 'border-blue-500 bg-blue-500' : 'border-gray-300 group-hover:border-blue-500'}`}>
+                        {selectedTypes.includes(type) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span className={`text-sm ${selectedTypes.includes(type) ? 'text-gray-900 font-medium' : 'text-gray-600 group-hover:text-gray-900'}`}>{type}</span>
+                    </label>
+                  ))}
                 </div>
               )}
             </div>
 
             {/* LIT/NONLIT Filter */}
-            {/* <div className="mb-6">
-             <button 
+            <div className="mb-6 border-b border-gray-100 pb-6">
+              <button 
                 onClick={() => setLitOpen(!litOpen)}
                 className="flex items-center justify-between w-full text-left font-bold text-slate-700 uppercase tracking-widest text-xs mb-4"
               >
-                LIT/NONLIT
+                LIT / NON-LIT
                 <ChevronDown className={`w-4 h-4 transition-transform ${litOpen ? 'rotate-180' : ''}`} />
               </button>
               
               {litOpen && (
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-5 h-5 rounded border-2 border-gray-300 group-hover:border-blue-500 transition-colors"></div>
-                    <span className="text-sm text-gray-600 uppercase font-medium group-hover:text-gray-900">Lit</span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="w-5 h-5 rounded border-2 border-gray-300 group-hover:border-blue-500 transition-colors"></div>
-                    <span className="text-sm text-gray-600 uppercase font-medium group-hover:text-gray-900">Non Lit</span>
-                  </label>
+                  {litOptions.map(lit => (
+                    <label key={lit} className="flex items-center gap-3 cursor-pointer group" onClick={() => toggleLitType(lit)}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${selectedLitTypes.includes(lit) ? 'border-blue-500 bg-blue-500' : 'border-gray-300 group-hover:border-blue-500'}`}>
+                        {selectedLitTypes.includes(lit) && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span className={`text-sm ${selectedLitTypes.includes(lit) ? 'text-gray-900 font-medium' : 'text-gray-600 group-hover:text-gray-900'}`}>{lit}</span>
+                    </label>
+                  ))}
                 </div>
               )}
-            </div> */}
+            </div>
+
+            {/* SIZE Filter */}
+            <div className="mb-6 border-b border-gray-100 pb-6">
+              <button 
+                onClick={() => setSizeOpen(!sizeOpen)}
+                className="flex items-center justify-between w-full text-left font-bold text-slate-700 uppercase tracking-widest text-xs mb-4"
+              >
+                SIZE (WIDTH X HEIGHT)
+                <ChevronDown className={`w-4 h-4 transition-transform ${sizeOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {sizeOpen && (
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Width (ft)</span>
+                      <span className="font-bold text-gray-900">{minWidth} - {maxWidth}</span>
+                    </div>
+                    <DualRangeSlider 
+                      min={0} max={maxAvailableWidth} 
+                      val1={minWidth} val2={maxWidth} 
+                      onChange={(v1, v2) => { setMinWidth(v1); setMaxWidth(v2); }} 
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Height (ft)</span>
+                      <span className="font-bold text-gray-900">{minHeight} - {maxHeight}</span>
+                    </div>
+                    <DualRangeSlider 
+                      min={0} max={maxAvailableHeight} 
+                      val1={minHeight} val2={maxHeight} 
+                      onChange={(v1, v2) => { setMinHeight(v1); setMaxHeight(v2); }} 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* PRICE Filter */}
+            <div className="mb-6">
+              <button 
+                onClick={() => setPriceOpen(!priceOpen)}
+                className="flex items-center justify-between w-full text-left font-bold text-slate-700 uppercase tracking-widest text-xs mb-4"
+              >
+                PRICE
+                <ChevronDown className={`w-4 h-4 transition-transform ${priceOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {priceOpen && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex-1 relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">₹</span>
+                      <input 
+                        type="number" 
+                        value={minPrice} 
+                        onChange={(e) => {
+                          const val = Number(e.target.value) || 0;
+                          setMinPrice(val);
+                          if (val > maxPrice) setMaxPrice(val);
+                        }} 
+                        className="w-full border border-gray-200 rounded-md pl-6 pr-2 py-1.5 text-sm outline-none focus:border-blue-400"
+                      />
+                    </div>
+                    <span className="text-gray-400 text-xs">to</span>
+                    <div className="flex-1 relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">₹</span>
+                      <input 
+                        type="number" 
+                        value={maxPrice} 
+                        onChange={(e) => {
+                          const val = Number(e.target.value) || 0;
+                          setMaxPrice(val);
+                          if (val < minPrice) setMinPrice(val);
+                        }} 
+                        className="w-full border border-gray-200 rounded-md pl-6 pr-2 py-1.5 text-sm outline-none focus:border-blue-400"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="px-1">
+                    <DualRangeSlider 
+                      min={lowestPrice} max={highestPrice} 
+                      val1={minPrice} val2={maxPrice} 
+                      onChange={(v1, v2) => { setMinPrice(v1); setMaxPrice(v2); }} 
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1">
+                    <span>₹{lowestPrice.toLocaleString()}</span>
+                    <span>₹{highestPrice.toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-8 border-t border-gray-100 pt-6">
+              <button 
+                onClick={handleApplyFilters}
+                className="w-full bg-[#2563eb] text-white font-bold text-sm py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-md shadow-blue-100"
+              >
+                Apply Filters
+              </button>
+            </div>
           </div>
         </aside>
 

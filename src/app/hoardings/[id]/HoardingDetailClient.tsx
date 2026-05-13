@@ -633,18 +633,26 @@ export default function HoardingDetailClient({ hoarding }: HoardingDetailClientP
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-md font-bold text-gray-900 mb-4">Pricing Details</h3>
             <div className="space-y-4">
-              <div className="flex justify-between items-start text-sm">
-                <div className="flex flex-col">
-                  <span className="text-gray-500 font-medium tracking-tight">Approx. Total Cost:</span>
-                  <span className="text-[10px] text-blue-600 font-black uppercase mt-1">
-                    Duration: {durationMonths.toFixed(1)} Months
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm pb-3 border-b border-gray-50">
+                  <span className="text-gray-500 font-medium">Monthly Price (Full Value):</span>
+                  <span className="text-gray-900 font-black tracking-tight">
+                    ₹ {Math.ceil(hoarding.pricingBreakdown?.totalPricePerMonth || perMonthTotal).toLocaleString()}
                   </span>
                 </div>
-                <div className="text-gray-900 font-black tracking-tight flex flex-col items-end">
-                  <span>₹ {approxTotalCost.toLocaleString()}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase mt-1">
-                    Includes GST 2.5% <span className="text-red-500">+ Payment Gateway Charges (18% on 2.5%)</span>
-                  </span>
+                <div className="flex justify-between items-start text-sm">
+                  <div className="flex flex-col">
+                    <span className="text-gray-500 font-medium tracking-tight">Approx. Total Cost:</span>
+                    <span className="text-[10px] text-blue-600 font-black uppercase mt-1">
+                      Duration: {durationMonths.toFixed(1)} Months
+                    </span>
+                  </div>
+                  <div className="text-gray-900 font-black tracking-tight flex flex-col items-end">
+                    <span>₹ {approxTotalCost.toLocaleString()}</span>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 text-right">
+                      Includes GST {gstPercent}% <span className="text-red-500">+ Gateway Charges</span>
+                    </span>
+                  </div>
                 </div>
               </div>
 

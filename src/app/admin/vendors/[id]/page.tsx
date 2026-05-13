@@ -19,6 +19,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  ChevronDown,
+  Upload,
 } from "lucide-react";
 
 interface User {
@@ -51,6 +53,8 @@ export default function AdminVendorDetailPage() {
   const [hoardings, setHoardings] = useState<Hoarding[]>([]);
   const [authChecked, setAuthChecked] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [isUploadingJson, setIsUploadingJson] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -122,6 +126,77 @@ export default function AdminVendorDetailPage() {
     }
   };
 
+  const handleJsonUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingJson(true);
+    setShowAddMenu(false);
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+
+      let items = [];
+      if (Array.isArray(json)) {
+        items = json;
+      } else if (json.Sheet1 && Array.isArray(json.Sheet1)) {
+        items = json.Sheet1.filter((i: any) => i !== null && typeof i === 'object' && Object.keys(i).length > 2);
+      } else {
+        alert("Invalid JSON format. Expected an array.");
+        return;
+      }
+
+      let successCount = 0;
+      for (const item of items) {
+        if (!item || typeof item !== 'object') continue;
+        
+        // Skip empty rows or headers from Sheet1
+        if (item.Column1 === "SL" || item.Column1 === "TOTAL" || (typeof item.Column1 === "string" && item.Column1.includes("PROPOSAL"))) continue;
+
+        const payload = {
+          name: String(item.name || item.location || item["Dear  Sir/ Ma'am"] || "Imported Hoarding"),
+          description: String(item.description || ""),
+          address: String(item.address || item["Dear  Sir/ Ma'am"] || "Unknown Address"),
+          city: String(item.city || item.Column2 || "Unknown City"),
+          state: String(item.state || "Odisha"),
+          latitude: Number(item.latitude) || 0,
+          longitude: Number(item.longitude) || 0,
+          width: Number(item.width || item.Column4) || 1,
+          height: Number(item.height || item.Column5) || 1,
+          type: ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"].includes(item.type) ? item.type : "Hoarding",
+          lightingType: ["Lit", "Non-Lit", "Front Lit", "Back Lit"].includes(item.lightingType) ? item.lightingType : (item.Column8 === "FL" ? "Front Lit" : "Non-Lit"),
+          pricePerMonth: Number(item.pricePerMonth || item.Column10) || 1000,
+          minimumBookingAmount: Number(item.minimumBookingAmount) || 0,
+          uniqueReach: Number(item.uniqueReach) || 0,
+          images: Array.isArray(item.images) ? item.images : [],
+          ownerId: id // vendor ID
+        };
+
+        const res = await fetchWithAuth("/api/hoardings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          successCount++;
+        } else {
+          console.error("Failed to upload item:", await res.text());
+        }
+      }
+
+      alert(`Successfully uploaded ${successCount} hoardings.`);
+      fetchData(); // Refresh list
+    } catch (error) {
+      console.error("JSON upload failed", error);
+      alert("Failed to parse JSON file.");
+    } finally {
+      setIsUploadingJson(false);
+      // Reset input value so the same file can be selected again
+      e.target.value = '';
+    }
+  };
+
   if (loading || !authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -182,13 +257,42 @@ export default function AdminVendorDetailPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => router.push(`/admin/vendors/${id}/add-hoarding`)}
-            className="bg-[#2563eb] text-white px-6 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-200"
-          >
-            <Plus size={20} />
-            Add New Hoarding
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowAddMenu(!showAddMenu)}
+              disabled={isUploadingJson}
+              className="bg-[#2563eb] text-white px-6 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 disabled:opacity-75"
+            >
+              {isUploadingJson ? <Loader2 size={20} className="animate-spin" /> : <Plus size={20} />}
+              {isUploadingJson ? "Uploading..." : "Add New Hoarding"}
+              <ChevronDown size={20} className={`transition-transform ${showAddMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showAddMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                <button
+                  onClick={() => {
+                    setShowAddMenu(false);
+                    router.push(`/admin/vendors/${id}/add-hoarding`);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-sm font-semibold text-gray-700"
+                >
+                  <Edit size={16} />
+                  Manual upload
+                </button>
+                <label className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-sm font-semibold text-gray-700 cursor-pointer border-t border-gray-50">
+                  <Upload size={16} />
+                  Upload json
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    className="hidden" 
+                    onChange={handleJsonUpload}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Vendor Stats/Info */}
