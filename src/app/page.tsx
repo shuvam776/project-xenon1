@@ -31,7 +31,9 @@ export default async function Home() {
         city: city,
         count: count,
         color: colors[idx % colors.length],
-        thumbnail: sampleHoarding?.images?.[0] || fallbackThumbnail,
+        thumbnail: city.toLowerCase() === "cuttack" 
+          ? "https://upload.wikimedia.org/wikipedia/commons/3/3d/2-barabati-stadium-cuttack-odisha-city-hero.jpg"
+          : (sampleHoarding?.images?.[0] || fallbackThumbnail),
       };
     }),
   );
