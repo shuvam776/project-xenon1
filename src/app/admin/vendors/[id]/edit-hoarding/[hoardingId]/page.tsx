@@ -389,6 +389,53 @@ export default function AdminEditHoardingForVendorPage() {
                     className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Dimensions (Ft)</label>
+                  <div className="flex gap-3">
+                    <div className="relative flex-1">
+                       <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                       <input
+                        {...register("width", { valueAsNumber: true })}
+                        type="number"
+                        placeholder="W"
+                        className="w-full pl-9 pr-3 py-3 border rounded-xl font-bold text-gray-700 focus:ring-2 focus:ring-[#2563eb] outline-none"
+                      />
+                    </div>
+                    <span className="self-center font-black text-gray-300">X</span>
+                    <div className="relative flex-1">
+                       <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 rotate-90" size={14} />
+                       <input
+                        {...register("height", { valueAsNumber: true })}
+                        type="number"
+                        placeholder="H"
+                        className="w-full pl-9 pr-3 py-3 border rounded-xl font-bold text-gray-700 focus:ring-2 focus:ring-[#2563eb] outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Min. Booking Period (Months)</label>
+                  <select
+                    {...register("minimumBookingMonths", { valueAsNumber: true })}
+                    className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
+                  >
+                    {[1, 2, 3, 6, 12].map(m => (
+                      <option key={m} value={m}>{m} Month{m > 1 ? 's' : ''}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Min. Booking Amount </label>
+                  <div className="relative">
+                    <IndianRupee className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <input
+                      {...register("minimumBookingAmount", { valueAsNumber: true })}
+                      type="number"
+                      placeholder="Same as monthly if empty"
+                      className="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#2563eb] outline-none font-bold"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
