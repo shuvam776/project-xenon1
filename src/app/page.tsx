@@ -64,6 +64,26 @@ export default async function Home() {
             <p className="text-center text-slate-700 font-medium text-lg md:text-xl max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
               An online marketplace for listing and booking hoardings online by connecting hoarding vendors and advertisers in one place
             </p>
+
+            <Link
+              href="/explore"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 px-7 py-3.5 text-base font-bold text-white shadow-[0_14px_30px_-12px_rgba(37,99,235,0.75)] ring-1 ring-blue-400/40 transition-all duration-300 hover:-translate-y-0.5 hover:from-blue-700 hover:to-blue-600 hover:shadow-[0_18px_36px_-12px_rgba(29,78,216,0.85)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent animate-in fade-in slide-in-from-bottom-5 delay-200"
+            >
+              Explore Hoardings
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
 
           {/* Search Bar */}
