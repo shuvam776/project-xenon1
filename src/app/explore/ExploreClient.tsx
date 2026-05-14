@@ -186,6 +186,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
   const sortedHoardings = [...filteredHoardings].sort((a, b) => {
     if (sortBy === "price-asc") return a.effectiveMinSpend - b.effectiveMinSpend;
     if (sortBy === "price-desc") return b.effectiveMinSpend - a.effectiveMinSpend;
+    if (sortBy === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     return 0; // Default/Top Searched (no change)
   });
 
@@ -382,8 +384,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                     />
                   </div>
                   <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-1">
-                    <span>₹{lowestPrice.toLocaleString()}</span>
-                    <span>₹{highestPrice.toLocaleString()}</span>
+                    <span>₹{lowestPrice.toLocaleString("en-IN")}</span>
+                    <span>₹{highestPrice.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
               )}
@@ -432,6 +434,8 @@ export default function ExploreClient({ initialHoardings, initialCity = "" }: { 
                   <option value="default">Sort by : Top Searched</option>
                   <option value="price-asc">Sort by : Price Low to High</option>
                   <option value="price-desc">Sort by : Price High to Low</option>
+                  <option value="newest">Sort by : Newest First</option>
+                  <option value="oldest">Sort by : Oldest First</option>
                 </select>
                 <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>

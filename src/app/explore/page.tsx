@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 
 async function getHoardings() {
   await dbConnect();
-  // Fetch approved hoardings, sorted newest first
-  const hoardings = await Hoarding.find({ status: "approved" }).sort({ createdAt: -1 });
+  // Fetch approved hoardings, sorted oldest first
+  const hoardings = await Hoarding.find({ status: "approved" }).sort({ createdAt: 1 });
   const settings = await getPlatformPricingSettings();
   return hoardings.map((hoarding) =>
     withBuyerFacingPricing(JSON.parse(JSON.stringify(hoarding)), settings),

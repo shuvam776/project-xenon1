@@ -23,6 +23,7 @@ import {
   Upload,
   CheckSquare,
   Square,
+  Search,
 } from "lucide-react";
 
 interface User {
@@ -58,6 +59,7 @@ export default function AdminVendorDetailPage() {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isUploadingJson, setIsUploadingJson] = useState(false);
   const [selectedHoardingIds, setSelectedHoardingIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -139,14 +141,25 @@ export default function AdminVendorDetailPage() {
     );
   };
 
-  const allSelected = hoardings.length > 0 && selectedHoardingIds.length === hoardings.length;
+  const filteredHoardings = hoardings.filter(h => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.trim().toLowerCase();
+    return (
+      h.name.toLowerCase().includes(query) ||
+      h.location.address.toLowerCase().includes(query) ||
+      h.location.city.toLowerCase().includes(query) ||
+      h.status.toLowerCase().includes(query)
+    );
+  });
+
+  const allSelected = filteredHoardings.length > 0 && selectedHoardingIds.length === filteredHoardings.length;
 
   const toggleSelectAll = () => {
     if (allSelected) {
       setSelectedHoardingIds([]);
       return;
     }
-    setSelectedHoardingIds(hoardings.map((h) => h._id));
+    setSelectedHoardingIds(filteredHoardings.map((h) => h._id));
   };
 
   const handleBulkDelete = async () => {
@@ -387,6 +400,18 @@ export default function AdminVendorDetailPage() {
             Vendor Listings
           </h2>
 
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search hoardings by name, city, address or status..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#2563eb] text-sm text-gray-900"
+            />
+          </div>
+
           {hoardings.length > 0 && (
             <div className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -418,8 +443,8 @@ export default function AdminVendorDetailPage() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hoardings.length > 0 ? (
-              hoardings.map((hoarding) => (
+            {filteredHoardings.length > 0 ? (
+              filteredHoardings.map((hoarding) => (
                 <div
                   key={hoarding._id}
                   className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all group"
@@ -510,13 +535,15 @@ export default function AdminVendorDetailPage() {
             ) : (
               <div className="col-span-full py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
                 <Building2 className="mx-auto text-gray-200 mb-4" size={64} />
-                <p className="text-gray-400 font-medium">This vendor has no hoardings yet.</p>
-                <button
-                   onClick={() => router.push(`/admin/vendors/${id}/add-hoarding`)}
-                   className="mt-4 text-[#2563eb] font-bold flex items-center gap-2 mx-auto"
-                >
-                  <Plus size={18} /> Add first hoarding
-                </button>
+                <p className="text-gray-400 font-medium">No hoardings found.</p>
+                {hoardings.length === 0 && (
+                  <button
+                     onClick={() => router.push(`/admin/vendors/${id}/add-hoarding`)}
+                     className="mt-4 text-[#2563eb] font-bold flex items-center gap-2 mx-auto"
+                  >
+                    <Plus size={18} /> Add first hoarding
+                  </button>
+                )}
               </div>
             )}
           </div>
