@@ -13,11 +13,6 @@ export default async function Home() {
 
   let featuredLocations = await Promise.all(
     targetCities.map(async (city, idx) => {
-      const count = await Hoarding.countDocuments({
-        status: "approved",
-        "location.city": new RegExp(`^${city}$`, "i"),
-      });
-
       const sampleHoarding = await Hoarding.findOne({
         status: "approved",
         "location.city": new RegExp(`^${city}$`, "i"),
@@ -29,7 +24,6 @@ export default async function Home() {
 
       return {
         city: city,
-        count: count,
         color: colors[idx % colors.length],
         thumbnail: city.toLowerCase() === "cuttack" 
           ? "https://upload.wikimedia.org/wikipedia/commons/3/3d/2-barabati-stadium-cuttack-odisha-city-hero.jpg"
@@ -109,9 +103,6 @@ export default async function Home() {
                 </div>
                 <div className="p-8 bg-white border-t border-slate-50">
                   <h4 className="text-xl font-black text-slate-900 mb-1">{loc.city}</h4>
-                  <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                    {loc.count > 0 ? `${loc.count} Hoarding${loc.count > 1 ? 's' : ''} Available` : 'Explore Spaces'}
-                  </p>
                   <div className="mt-6 flex items-center justify-between">
                     <span className="text-[11px] font-black uppercase tracking-widest text-blue-600">View Spaces</span>
                     <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white group-hover:bg-blue-600 transition-colors">
