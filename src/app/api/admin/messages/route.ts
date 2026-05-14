@@ -85,3 +85,45 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("accessToken")?.value;
+
+    const decoded = verifyAccessToken(token as string);
+    if (!decoded) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+    if (decoded.role !== "admin") {
+      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    }
+
+    const { threadId } = await req.json();
+    if (!threadId || typeof threadId !== "string") {
+      return NextResponse.json({ error: "threadId is required" }, { status: 400 });
+    }
+
+    await dbConnect();
+
+    const query: Record<string, unknown> = {
+      receiver: decoded.userId,
+      status: "unread",
+    };
+
+    if (threadId.includes("@")) {
+      query.email = threadId;
+    } else {
+      query.sender = threadId;
+    }
+
+    const result = await Message.updateMany(query, { $set: { status: "read" } });
+
+    return NextResponse.json({
+      message: "Messages marked as read",
+      updatedCount: result.modifiedCount ?? 0,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

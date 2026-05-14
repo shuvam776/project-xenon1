@@ -230,6 +230,7 @@ export default function AdminDashboard() {
 
     fetchStatsData();
     fetchPlatformSettings();
+    fetchAdminMessages();
 
     // Polling for messages
     const pollInterval = setInterval(() => {
@@ -336,13 +337,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const getThreadKeyFromMessage = (m: any) => {
+    const otherPerson = m.sender?.role === "admin" ? m.receiver : m.sender;
+    return otherPerson?._id || m.email || "guest";
+  };
+
   const getGroupedMessages = () => {
     const groups: { [key: string]: any } = {};
     adminMessages.forEach((m) => {
       // We want to group by the 'other person' (not the admin themselves)
       const otherPerson = m.sender?.role === 'admin' ? m.receiver : m.sender;
+      const isUnreadForAdmin =
+        m.status === "unread" &&
+        m.sender?.role !== "admin" &&
+        m.receiver?.role === "admin";
       
-      const key = otherPerson?._id || m.email || "guest";
+      const key = getThreadKeyFromMessage(m);
       
       if (!groups[key]) {
         groups[key] = {
@@ -351,9 +361,13 @@ export default function AdminDashboard() {
           messages: [],
           lastMessage: m.content,
           time: m.createdAt,
+          hasUnread: false,
         };
       }
       groups[key].messages.push(m);
+      if (isUnreadForAdmin) {
+        groups[key].hasUnread = true;
+      }
       if (new Date(m.createdAt) > new Date(groups[key].time)) {
         groups[key].lastMessage = m.content;
         groups[key].time = m.createdAt;
@@ -364,6 +378,9 @@ export default function AdminDashboard() {
   };
 
   const groupedThreads = getGroupedMessages();
+  const hasUnreadMessagesForAdmin = groupedThreads.some(
+    (thread) => thread.hasUnread,
+  );
   const filteredThreads = groupedThreads.filter((thread) => {
     const query = messageSearchQuery.trim().toLowerCase();
     if (!query) return true;
@@ -375,6 +392,41 @@ export default function AdminDashboard() {
   });
   const activeThread =
     filteredThreads.find((t) => t.id === selectedThreadId) || filteredThreads[0];
+
+  useEffect(() => {
+    const markActiveThreadAsRead = async () => {
+      if (activeTab !== "messages" || !activeThread?.id) return;
+      if (!activeThread.hasUnread) return;
+
+      try {
+        const res = await fetchWithAuth("/api/admin/messages", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ threadId: activeThread.id }),
+        });
+
+        if (res.ok) {
+          setAdminMessages((prev) =>
+            prev.map((msg: any) => {
+              const isSameThread = getThreadKeyFromMessage(msg) === activeThread.id;
+              const isIncomingToAdmin =
+                msg.status === "unread" &&
+                msg.sender?.role !== "admin" &&
+                msg.receiver?.role === "admin";
+
+              return isSameThread && isIncomingToAdmin
+                ? { ...msg, status: "read" }
+                : msg;
+            }),
+          );
+        }
+      } catch (error) {
+        console.error("Failed to mark admin thread as read", error);
+      }
+    };
+
+    markActiveThreadAsRead();
+  }, [activeTab, activeThread?.id, activeThread?.hasUnread]);
 
   useEffect(() => {
     console.log("[AdminDashboard] State Update: Admin Messages Count =", adminMessages.length);
@@ -818,7 +870,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => setActiveTab("messages")}
-                className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 ${
+                className={`relative flex-1 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 ${
                   activeTab === "messages"
                     ? "bg-[#2563eb] text-white"
                     : "text-gray-600 hover:bg-gray-50"
@@ -826,6 +878,9 @@ export default function AdminDashboard() {
               >
                 <MessageSquare size={18} />
                 Messages
+                {hasUnreadMessagesForAdmin && (
+                  <span className="absolute right-4 top-2 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+                )}
                       </button>
                     </div>
           </div>
@@ -1476,7 +1531,12 @@ export default function AdminDashboard() {
                               className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 ${selectedThreadId === thread.id || (!selectedThreadId && thread.id === filteredThreads[0]?.id) ? "bg-white shadow-lg shadow-blue-100/50 border border-blue-50" : "hover:bg-white/50"}`}
                             >
                                <div className="flex justify-between items-start mb-1">
-                                  <p className={`text-sm font-black ${selectedThreadId === thread.id ? "text-blue-600" : "text-gray-900"}`}>{thread.name}</p>
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <p className={`text-sm font-black truncate ${selectedThreadId === thread.id ? "text-blue-600" : "text-gray-900"}`}>{thread.name}</p>
+                                    {thread.hasUnread && (
+                                      <span className="h-2.5 w-2.5 rounded-full bg-red-500 shrink-0" />
+                                    )}
+                                  </div>
                                   <span className="text-[9px] text-gray-400 font-bold">{new Date(thread.time).toLocaleDateString()}</span>
                                </div>
                                <p className="text-xs text-gray-500 truncate font-medium">{thread.lastMessage}</p>
