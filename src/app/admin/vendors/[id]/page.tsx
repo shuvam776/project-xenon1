@@ -21,6 +21,8 @@ import {
   XCircle,
   ChevronDown,
   Upload,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 
 interface User {
@@ -55,6 +57,7 @@ export default function AdminVendorDetailPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isUploadingJson, setIsUploadingJson] = useState(false);
+  const [selectedHoardingIds, setSelectedHoardingIds] = useState<string[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -91,6 +94,7 @@ export default function AdminVendorDetailPage() {
       if (hoardingsRes.ok) {
         const data = await hoardingsRes.json();
         setHoardings(data.hoardings);
+        setSelectedHoardingIds([]);
       }
     } catch (error) {
       console.error("Failed to fetch vendor data", error);
@@ -110,17 +114,68 @@ export default function AdminVendorDetailPage() {
 
     setActionLoading(hoardingId);
     try {
-      const res = await fetchWithAuth(`/api/hoardings/${hoardingId}`, {
+      const res = await fetchWithAuth(`/api/admin/hoardings/${hoardingId}`, {
         method: "DELETE",
       });
       if (res.ok) {
         setHoardings((prev) => prev.filter((h) => h._id !== hoardingId));
+        setSelectedHoardingIds((prev) => prev.filter((id) => id !== hoardingId));
       } else {
         const data = await res.json();
         alert(data.error || "Failed to delete hoarding");
       }
     } catch (error) {
       alert("Failed to delete hoarding");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const toggleHoardingSelection = (hoardingId: string) => {
+    setSelectedHoardingIds((prev) =>
+      prev.includes(hoardingId)
+        ? prev.filter((id) => id !== hoardingId)
+        : [...prev, hoardingId]
+    );
+  };
+
+  const allSelected = hoardings.length > 0 && selectedHoardingIds.length === hoardings.length;
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedHoardingIds([]);
+      return;
+    }
+    setSelectedHoardingIds(hoardings.map((h) => h._id));
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedHoardingIds.length === 0) return;
+
+    const confirmed = confirm(
+      `Are you sure you want to delete ${selectedHoardingIds.length} selected hoarding(s)?`
+    );
+    if (!confirmed) return;
+
+    setActionLoading("bulk-delete");
+    try {
+      const res = await fetchWithAuth("/api/admin/hoardings", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hoardingIds: selectedHoardingIds }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Failed to delete selected hoardings");
+        return;
+      }
+
+      const selectedSet = new Set(selectedHoardingIds);
+      setHoardings((prev) => prev.filter((h) => !selectedSet.has(h._id)));
+      setSelectedHoardingIds([]);
+    } catch (error) {
+      alert("Failed to delete selected hoardings");
     } finally {
       setActionLoading(null);
     }
@@ -332,6 +387,36 @@ export default function AdminVendorDetailPage() {
             Vendor Listings
           </h2>
 
+          {hoardings.length > 0 && (
+            <div className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleSelectAll}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                >
+                  {allSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                  {allSelected ? "Unselect all" : "Select all"}
+                </button>
+                <p className="text-sm text-gray-500">
+                  {selectedHoardingIds.length} selected
+                </p>
+              </div>
+
+              <button
+                onClick={handleBulkDelete}
+                disabled={selectedHoardingIds.length === 0 || actionLoading === "bulk-delete"}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {actionLoading === "bulk-delete" ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Trash2 size={16} />
+                )}
+                Delete selected
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {hoardings.length > 0 ? (
               hoardings.map((hoarding) => (
@@ -340,6 +425,18 @@ export default function AdminVendorDetailPage() {
                   className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all group"
                 >
                   <div className="relative aspect-video">
+                    <button
+                      type="button"
+                      onClick={() => toggleHoardingSelection(hoarding._id)}
+                      className="absolute top-4 left-4 z-10 p-2 rounded-lg bg-white/90 border border-gray-200 hover:bg-white transition-colors"
+                      aria-label={`Select ${hoarding.name}`}
+                    >
+                      {selectedHoardingIds.includes(hoarding._id) ? (
+                        <CheckSquare size={18} className="text-[#2563eb]" />
+                      ) : (
+                        <Square size={18} className="text-gray-500" />
+                      )}
+                    </button>
                     {hoarding.images && hoarding.images[0] ? (
                       <img
                         src={hoarding.images[0]}
