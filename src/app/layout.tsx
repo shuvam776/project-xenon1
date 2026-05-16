@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ToastManager from "@/components/ToastManager";
 import AdminChatWidget from "@/components/AdminChatWidget";
+import TimeTracker from "@/components/TimeTracker";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -142,6 +143,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <AdminChatWidget />
+        <TimeTracker />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

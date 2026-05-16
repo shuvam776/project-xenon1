@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { normalizeKycStatus } from "@/lib/kycStatus";
+import { formatTimeOnSite } from "@/lib/formatTime";
 import {
   Users,
   User as UserIcon,
@@ -59,6 +60,7 @@ interface User {
   isPhoneVerified: boolean;
   kycStatus: string;
   createdAt: string;
+  totalTimeOnSite?: number;
 }
 
 interface UserDetails extends User {
@@ -1027,6 +1029,9 @@ export default function AdminDashboard() {
                           KYC Status
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                          Time on Site
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                           Actions
                         </th>
                       </tr>
@@ -1114,6 +1119,12 @@ export default function AdminDashboard() {
                               }`}
                             >
                               {normalizedStatus.replace("_", " ")}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="text-sm font-semibold text-purple-600 flex items-center gap-1">
+                              <Clock size={14} className="text-purple-400" />
+                              {formatTimeOnSite(user.totalTimeOnSite)}
                             </span>
                           </td>
                           <td className="px-4 py-4">
@@ -1814,6 +1825,14 @@ export default function AdminDashboard() {
                         </label>
                         <p className="text-gray-700 text-sm font-mono">
                           {userDetailsModal.user._id}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold text-gray-600 flex items-center gap-1">
+                          <Clock size={14} /> Time on Site
+                        </label>
+                        <p className="text-purple-600 font-bold">
+                          {formatTimeOnSite((userDetailsModal.user as any).totalTimeOnSite)}
                         </p>
                       </div>
                     </div>

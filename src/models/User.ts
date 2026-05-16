@@ -29,6 +29,7 @@ export interface IUser extends Document {
   googleId?: string;
   refreshToken?: string;
   refreshTokenExpiry?: Date;
+  totalTimeOnSite: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -69,6 +70,7 @@ const UserSchema: Schema<IUser> = new Schema({
   },
   kycDetails: { type: KYCSchema },
   image: { type: String },
+  totalTimeOnSite: { type: Number, default: 0 },
   refreshToken: { type: String, select: false },
   refreshTokenExpiry: { type: Date, select: false },
 }, { timestamps: true });
