@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import { formatTimeOnSite } from "@/lib/formatTime";
 import {
   Building2,
   Mail,
@@ -34,6 +35,7 @@ interface User {
   image?: string;
   role: string;
   kycStatus: string;
+  totalTimeOnSite?: number;
 }
 
 interface Hoarding {
@@ -215,11 +217,45 @@ export default function AdminVendorDetailPage() {
       }
 
       let successCount = 0;
+      // Helper to parse dimensions from various formats
+      const parseDimensions = (item: any): { width: number; height: number } => {
+        // 1. Try explicit numeric width/height fields first
+        const explicitWidth = parseFloat(item.width);
+        const explicitHeight = parseFloat(item.height);
+        if (!isNaN(explicitWidth) && explicitWidth > 0 && !isNaN(explicitHeight) && explicitHeight > 0) {
+          return { width: explicitWidth, height: explicitHeight };
+        }
+
+        // 2. Try parsing a combined size/dimensions string (e.g. "20x10", "20'x10'", "20ft x 10ft", "20 x 10")
+        const sizeStr = String(item.size || item.dimensions || item.Column4 || "");
+        const sizeMatch = sizeStr.match(/(\d+(?:\.\d+)?)\s*[^0-9]*?\s*[xX×]\s*(\d+(?:\.\d+)?)/);
+        if (sizeMatch) {
+          const w = parseFloat(sizeMatch[1]);
+          const h = parseFloat(sizeMatch[2]);
+          if (w > 0 && h > 0) return { width: w, height: h };
+        }
+
+        // 3. Try Column4 as width and Column5 as height (numeric sheet columns)
+        const col4 = parseFloat(item.Column4);
+        const col5 = parseFloat(item.Column5);
+        if (!isNaN(col4) && col4 > 0 && !isNaN(col5) && col5 > 0) {
+          return { width: col4, height: col5 };
+        }
+
+        // 4. Fallback
+        return {
+          width: (!isNaN(explicitWidth) && explicitWidth > 0) ? explicitWidth : 1,
+          height: (!isNaN(explicitHeight) && explicitHeight > 0) ? explicitHeight : 1,
+        };
+      };
+
       for (const item of items) {
         if (!item || typeof item !== 'object') continue;
         
         // Skip empty rows or headers from Sheet1
         if (item.Column1 === "SL" || item.Column1 === "TOTAL" || (typeof item.Column1 === "string" && item.Column1.includes("PROPOSAL"))) continue;
+
+        const { width, height } = parseDimensions(item);
 
         const payload = {
           name: String(item.name || item.location || item["Dear  Sir/ Ma'am"] || "Imported Hoarding"),
@@ -229,8 +265,8 @@ export default function AdminVendorDetailPage() {
           state: String(item.state || "Odisha"),
           latitude: Number(item.latitude) || 0,
           longitude: Number(item.longitude) || 0,
-          width: Number(item.width || item.Column4) || 1,
-          height: Number(item.height || item.Column5) || 1,
+          width,
+          height,
           type: ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"].includes(item.type) ? item.type : "Hoarding",
           lightingType: ["Lit", "Non-Lit", "Front Lit", "Back Lit"].includes(item.lightingType) ? item.lightingType : (item.Column8 === "FL" ? "Front Lit" : "Non-Lit"),
           pricePerMonth: Number(item.pricePerMonth || item.Column10) || 1000,
@@ -364,7 +400,7 @@ export default function AdminVendorDetailPage() {
         </div>
 
         {/* Vendor Stats/Info */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <p className="text-sm text-gray-500 font-medium">KYC Status</p>
             <div className="mt-2 flex items-center gap-2">
@@ -389,6 +425,15 @@ export default function AdminVendorDetailPage() {
             <p className="text-sm text-gray-500 font-medium">Active Listings</p>
             <p className="text-2xl font-bold text-green-600 mt-1">
               {hoardings.filter((h) => h.status === "approved").length}
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
+              <Clock size={14} className="text-purple-400" />
+              Time on Site
+            </p>
+            <p className="text-2xl font-bold text-purple-600 mt-1">
+              {formatTimeOnSite(vendor.totalTimeOnSite)}
             </p>
           </div>
         </div>

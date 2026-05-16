@@ -20,8 +20,10 @@ import {
   AlertCircle,
   ShieldCheck,
   Building2,
+  Clock,
 } from "lucide-react";
 import Link from "next/link";
+import { formatTimeOnSite } from "@/lib/formatTime";
 
 interface Hoarding {
   _id: string;
@@ -52,6 +54,7 @@ interface Buyer {
   image?: string;
   kycStatus: string;
   createdAt: string;
+  totalTimeOnSite?: number;
 }
 
 export default function AdminBuyerDetailPage({
@@ -266,7 +269,7 @@ export default function AdminBuyerDetailPage({
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-50 grid grid-cols-2 gap-4">
+              <div className="mt-8 pt-6 border-t border-gray-50 grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <p className="text-2xl font-black text-[#2563eb]">{wishlist.length}</p>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Wishlist</p>
@@ -274,6 +277,13 @@ export default function AdminBuyerDetailPage({
                 <div className="text-center">
                   <p className="text-2xl font-black text-green-600">{bookings.length}</p>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Bookings</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-black text-purple-600 flex items-center justify-center gap-1">
+                    <Clock size={16} className="text-purple-400" />
+                    {formatTimeOnSite(buyer.totalTimeOnSite)}
+                  </p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Time on Site</p>
                 </div>
               </div>
             </div>
