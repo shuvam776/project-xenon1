@@ -217,17 +217,29 @@ export default function AdminVendorDetailPage() {
       }
 
       let successCount = 0;
+      let failCount = 0;
+      const errors: string[] = [];
+
       // Helper to parse dimensions from various formats
       const parseDimensions = (item: any): { width: number; height: number } => {
-        // 1. Try explicit numeric width/height fields first
+        // 1. Try nested dimensions object (e.g. { dimensions: { width: 40, height: 10 } })
+        if (item.dimensions && typeof item.dimensions === 'object') {
+          const dw = parseFloat(item.dimensions.width);
+          const dh = parseFloat(item.dimensions.height);
+          if (!isNaN(dw) && dw > 0 && !isNaN(dh) && dh > 0) {
+            return { width: dw, height: dh };
+          }
+        }
+
+        // 2. Try explicit top-level numeric width/height fields
         const explicitWidth = parseFloat(item.width);
         const explicitHeight = parseFloat(item.height);
         if (!isNaN(explicitWidth) && explicitWidth > 0 && !isNaN(explicitHeight) && explicitHeight > 0) {
           return { width: explicitWidth, height: explicitHeight };
         }
 
-        // 2. Try parsing a combined size/dimensions string (e.g. "20x10", "20'x10'", "20ft x 10ft", "20 x 10")
-        const sizeStr = String(item.size || item.dimensions || item.Column4 || "");
+        // 3. Try parsing a combined size/dimensions string (e.g. "20x10", "20'x10'", "20ft x 10ft", "20 x 10")
+        const sizeStr = String(item.size || (typeof item.dimensions === 'string' ? item.dimensions : '') || item.Column4 || "");
         const sizeMatch = sizeStr.match(/(\d+(?:\.\d+)?)\s*[^0-9]*?\s*[xX×]\s*(\d+(?:\.\d+)?)/);
         if (sizeMatch) {
           const w = parseFloat(sizeMatch[1]);
@@ -235,18 +247,53 @@ export default function AdminVendorDetailPage() {
           if (w > 0 && h > 0) return { width: w, height: h };
         }
 
-        // 3. Try Column4 as width and Column5 as height (numeric sheet columns)
+        // 4. Try extracting dimensions from description string (e.g. "Dimensions: 40X10")
+        if (item.description && typeof item.description === 'string') {
+          const descMatch = item.description.match(/(\d+(?:\.\d+)?)\s*[xX×]\s*(\d+(?:\.\d+)?)/);
+          if (descMatch) {
+            const w = parseFloat(descMatch[1]);
+            const h = parseFloat(descMatch[2]);
+            if (w > 0 && h > 0) return { width: w, height: h };
+          }
+        }
+
+        // 5. Try Column4 as width and Column5 as height (numeric sheet columns)
         const col4 = parseFloat(item.Column4);
         const col5 = parseFloat(item.Column5);
         if (!isNaN(col4) && col4 > 0 && !isNaN(col5) && col5 > 0) {
           return { width: col4, height: col5 };
         }
 
-        // 4. Fallback
+        // 6. Fallback
         return {
           width: (!isNaN(explicitWidth) && explicitWidth > 0) ? explicitWidth : 1,
           height: (!isNaN(explicitHeight) && explicitHeight > 0) ? explicitHeight : 1,
         };
+      };
+
+      // Helper to extract location fields from nested or flat format
+      const parseLocation = (item: any) => {
+        const loc = item.location && typeof item.location === 'object' ? item.location : null;
+        return {
+          address: String(loc?.address || item.address || item["Dear  Sir/ Ma'am"] || "Unknown Address"),
+          city: String(loc?.city || item.city || item.Column2 || "Unknown City"),
+          state: String(loc?.state || item.state || "Odisha"),
+          zipCode: String(loc?.zipCode || loc?.zip || item.zipCode || item.zip || ""),
+        };
+      };
+
+      // Helper to resolve lighting type
+      const parseLightingType = (item: any): string => {
+        const validTypes = ["Lit", "Non-Lit", "Front Lit", "Back Lit"];
+        const raw = item.lightingType || item.lighting_type || item.lighting || "";
+        if (validTypes.includes(raw)) return raw;
+        // Check common abbreviations
+        const lower = String(raw).toLowerCase().trim();
+        if (lower === "fl" || lower === "front lit" || lower === "frontlit") return "Front Lit";
+        if (lower === "bl" || lower === "back lit" || lower === "backlit") return "Back Lit";
+        if (lower === "lit") return "Lit";
+        if (item.Column8 === "FL") return "Front Lit";
+        return "Non-Lit";
       };
 
       for (const item of items) {
@@ -256,40 +303,70 @@ export default function AdminVendorDetailPage() {
         if (item.Column1 === "SL" || item.Column1 === "TOTAL" || (typeof item.Column1 === "string" && item.Column1.includes("PROPOSAL"))) continue;
 
         const { width, height } = parseDimensions(item);
+        const location = parseLocation(item);
+        const lightingType = parseLightingType(item);
+
+        // Resolve hoarding type
+        const validTypes = ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"];
+        const rawType = item.type || item.hoarding_type || "";
+        const hoardingType = validTypes.includes(rawType) ? rawType : "Hoarding";
+
+        // Resolve coordinates (nested or flat)
+        const coords = item.location?.coordinates || item.coordinates || {};
+        const latitude = Number(coords.lat || coords.latitude || item.latitude || item.lat) || 0;
+        const longitude = Number(coords.lng || coords.longitude || item.longitude || item.lng) || 0;
 
         const payload = {
-          name: String(item.name || item.location || item["Dear  Sir/ Ma'am"] || "Imported Hoarding"),
+          name: String(item.name || location.address || "Imported Hoarding"),
           description: String(item.description || ""),
-          address: String(item.address || item["Dear  Sir/ Ma'am"] || "Unknown Address"),
-          city: String(item.city || item.Column2 || "Unknown City"),
-          state: String(item.state || "Odisha"),
-          latitude: Number(item.latitude) || 0,
-          longitude: Number(item.longitude) || 0,
+          address: location.address,
+          city: location.city,
+          state: location.state,
+          zipCode: location.zipCode,
+          latitude,
+          longitude,
           width,
           height,
-          type: ["Hoarding", "Unipole", "Gantry", "Bus Shelter", "Kiosk", "Other"].includes(item.type) ? item.type : "Hoarding",
-          lightingType: ["Lit", "Non-Lit", "Front Lit", "Back Lit"].includes(item.lightingType) ? item.lightingType : (item.Column8 === "FL" ? "Front Lit" : "Non-Lit"),
-          pricePerMonth: Number(item.pricePerMonth || item.Column10) || 1000,
-          minimumBookingAmount: Number(item.minimumBookingAmount) || 0,
-          uniqueReach: Number(item.uniqueReach) || 0,
+          type: hoardingType,
+          lightingType,
+          pricePerMonth: Number(item.pricePerMonth || item.price_per_month || item.price || item.Column10) || 1000,
+          minimumBookingAmount: Number(item.minimumBookingAmount || item.minimum_booking_amount) || 0,
+          uniqueReach: Number(item.uniqueReach || item.unique_reach) || 0,
           images: Array.isArray(item.images) ? item.images : [],
           ownerId: id // vendor ID
         };
 
-        const res = await fetchWithAuth("/api/hoardings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+        try {
+          const res = await fetchWithAuth("/api/hoardings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
 
-        if (res.ok) {
-          successCount++;
-        } else {
-          console.error("Failed to upload item:", await res.text());
+          if (res.ok) {
+            successCount++;
+          } else {
+            failCount++;
+            const errText = await res.text();
+            console.error(`Failed to upload "${payload.name}":`, errText);
+            if (errors.length < 5) {
+              errors.push(`"${payload.name}": ${errText}`);
+            }
+          }
+        } catch (err) {
+          failCount++;
+          console.error(`Error uploading "${payload.name}":`, err);
         }
       }
 
-      alert(`Successfully uploaded ${successCount} hoardings.`);
+      let message = `Successfully uploaded ${successCount} hoarding(s).`;
+      if (failCount > 0) {
+        message += `\n${failCount} failed.`;
+        if (errors.length > 0) {
+          message += `\n\nFirst errors:\n${errors.join("\n")}`;
+        }
+      }
+      alert(message);
       fetchData(); // Refresh list
     } catch (error) {
       console.error("JSON upload failed", error);
